@@ -96,11 +96,78 @@ header {visibility: hidden;}
     color: #1f77b4;
 }
 
+/* Hamburger Menu Button */
+.hamburger {
+    display: none;
+    flex-direction: column;
+    cursor: pointer;
+    padding: 0.5rem;
+    background: none;
+    border: none;
+    gap: 4px;
+}
+
+.hamburger span {
+    width: 25px;
+    height: 3px;
+    background-color: #31333F;
+    border-radius: 2px;
+    transition: all 0.3s ease;
+}
+
 /* Add padding to body to account for fixed navbar and maintain margins */
 .main .block-container {
     padding-top: 4rem;
     margin-left: 35%;
     margin-right: 35%;
+}
+
+/* Mobile Responsive Styles */
+@media screen and (max-width: 768px) {
+    .hamburger {
+        display: flex;
+        position: absolute;
+        right: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+    }
+
+    .navbar {
+        position: fixed;
+    }
+
+    .navbar-content {
+        flex-direction: column;
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        width: 100%;
+        padding: 1rem 0;
+        gap: 0.5rem;
+        background-color: #ffffff;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        max-width: 100%;
+        margin: 0;
+    }
+
+    .navbar-content.active {
+        display: flex;
+    }
+
+    .navbar a {
+        width: 100%;
+        text-align: center;
+        padding: 0.75rem 1rem;
+    }
+
+    /* Adjust main content padding for mobile */
+    .main .block-container {
+        margin-left: 5%;
+        margin-right: 5%;
+        padding-top: 4.5rem;
+    }
 }
 
 /* Smooth scrolling */
@@ -396,7 +463,14 @@ PROJECTS = [
         "name": "Pet Catalogue",
         "description": "A project focused on cataloging and managing pet information.",
         "url": "https://github.com/aldokimi/PetCatalogue",
-        "technologies": ["Angular", "Spring Boot", "MySQL", "Laravel", "PHP", "Typescript"],
+        "technologies": [
+            "Angular",
+            "Spring Boot",
+            "MySQL",
+            "Laravel",
+            "PHP",
+            "Typescript",
+        ],
     },
     {
         "name": "Tower Defense Game",
@@ -449,6 +523,7 @@ EDUCATION = [
     },
 ]
 
+
 # --- HELPER FUNCTION FOR SKILLS ---
 def render_skills(skills_list):
     """Renders a list of skills as styled tags."""
@@ -464,7 +539,12 @@ def render_skills(skills_list):
 st.markdown(
     """
     <nav class="navbar">
-        <div class="navbar-content">
+        <button class="hamburger" id="hamburgerBtn" aria-label="Toggle menu">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+        <div class="navbar-content" id="navbarContent">
             <a href="#about">About</a>
             <a href="#experience">Experience</a>
             <a href="#education">Education</a>
@@ -473,6 +553,62 @@ st.markdown(
             <a href="#contact">Contact</a>
         </div>
     </nav>
+    """,
+    unsafe_allow_html=True,
+)
+
+# Add JavaScript for hamburger menu functionality
+st.markdown(
+    """
+    <script>
+        (function() {
+            function initMenu() {
+                const hamburger = document.getElementById('hamburgerBtn');
+                const menu = document.getElementById('navbarContent');
+                const navLinks = menu.querySelectorAll('a');
+                
+                if (!hamburger || !menu) return;
+                
+                // Toggle menu on hamburger click
+                hamburger.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    menu.classList.toggle('active');
+                });
+                
+                // Close menu when clicking a link
+                navLinks.forEach(function(link) {
+                    link.addEventListener('click', function() {
+                        if (window.innerWidth <= 768) {
+                            menu.classList.remove('active');
+                        }
+                    });
+                });
+                
+                // Close menu when clicking outside
+                document.addEventListener('click', function(event) {
+                    const navbar = document.querySelector('.navbar');
+                    if (window.innerWidth <= 768 && 
+                        navbar && 
+                        !navbar.contains(event.target) && 
+                        menu.classList.contains('active')) {
+                        menu.classList.remove('active');
+                    }
+                });
+            }
+            
+            // Wait for DOM to be ready
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', initMenu);
+            } else {
+                initMenu();
+            }
+            
+            // Also try after a short delay in case Streamlit renders later
+            setTimeout(initMenu, 100);
+            setTimeout(initMenu, 500);
+        })();
+    </script>
     """,
     unsafe_allow_html=True,
 )
@@ -564,7 +700,6 @@ with col2:
 
     st.write("---")
 
-
     # Display education in boxes, 3 per row
     for i in range(0, len(EDUCATION), 3):
         cols = st.columns(3)
@@ -652,7 +787,6 @@ with col2:
                     """
                     )
                     st.markdown(cert_box_html, unsafe_allow_html=True)
-
 
     # =================================================================================
     # --- PROJECTS ---

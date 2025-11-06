@@ -12,6 +12,37 @@ st.set_page_config(
 st.markdown(
     """
 <style>
+/* Force white theme */
+[data-testid="stAppViewContainer"] {
+    background-color: #ffffff;
+}
+
+[data-testid="stAppViewContainer"] > .main {
+    background-color: #ffffff;
+}
+
+.stApp {
+    background-color: #ffffff;
+}
+
+body {
+    background-color: #ffffff !important;
+}
+
+.main {
+    background-color: #ffffff !important;
+}
+
+/* Ensure default text is dark for readability */
+p, span, div, h1, h2, h3, h4, h5, h6 {
+    color: #31333F;
+}
+
+/* Preserve link colors */
+a {
+    color: #1f77b4;
+}
+
 /* Clean up streamlit branding */
 #MainMenu {visibility: hidden;}
 footer {visibility: hidden;}

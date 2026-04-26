@@ -18,7 +18,7 @@ export function LogFeed({ entries }: { entries: LogEntry[] }) {
       <p className="font-mono text-sm text-slate-500">
         No published logs yet. Add the{" "}
         <code className="text-cyan-400/90">published</code> label to a GitHub
-        Issue in this repo, then let CI rebuild.
+        Issue in this repo, then run a new production build / deploy.
       </p>
     );
   }

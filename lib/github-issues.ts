@@ -120,7 +120,7 @@ export async function fetchPublishedLogEntries(): Promise<LogEntry[]> {
   const repo = repoSlug();
   if (!repo) {
     console.warn(
-      "[portfolio] Set PORTFOLIO_REPO (local) or rely on GITHUB_REPOSITORY in Actions; Logs feed is empty.",
+      "[portfolio] Set PORTFOLIO_REPO (e.g. in .env.local) or GITHUB_REPOSITORY in CI; Logs feed is empty.",
     );
     return [];
   }

@@ -1,8 +1,6 @@
-# https://circleci.com/docs/configuration-reference/
 version: 2.1
 
 parameters:
-  # Set to true when triggering via API (e.g. GitHub Issues webhook → Worker).
   issue_refresh:
     type: boolean
     default: false

@@ -21,7 +21,7 @@ The app is a **Next.js static export** (`output: 'export'`). Production output i
 
 See [environment-variables.md](environment-variables.md#cloudflare-pages). At minimum:
 
-- **`NODE_VERSION`** = `22.12.0` (matches [`.nvmrc`](../.nvmrc)).
+- **`NODE_VERSION`** = `22.14.0` (matches [`.nvmrc`](../.nvmrc); **≥ 22.13.0** required—see troubleshooting).
 - **`PORTFOLIO_REPO`** = `owner/repo` for GitHub Issues.
 - **`GITHUB_TOKEN`** — PAT with **Issues: read** ([github-token.md](github-token.md)).
 
@@ -65,7 +65,8 @@ Needs `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` in the environment.
 | Symptom | Check |
 |--------|--------|
 | `/logs` empty after build | `GITHUB_TOKEN` / `PORTFOLIO_REPO`; Issues have **`published`** label. |
-| Cloudflare: `Exit handler never called` during `npm ci` | **`NODE_VERSION=22.12.0`**; try `npm install --no-audit --no-fund && npm run build` as build command. |
+| `npm warn EBADENGINE` … `eslint-visitor-keys` … `^22.13.0` | Set **`NODE_VERSION`** to **22.14.0** (or any **≥ 22.13.0**) in Pages and match [`.nvmrc`](../.nvmrc). **22.12.0 is too old** for current eslint deps. |
+| Cloudflare: `Exit handler never called` during `npm ci` | Bump **`NODE_VERSION`** as above; try **`npm install --no-audit --no-fund && npm run build`** instead of `npm ci`; retry (often OOM/npm flake on long installs). |
 | Worker returns 401 | GitHub webhook **secret** matches Worker `GITHUB_WEBHOOK_SECRET`. |
 | Deploy hook returns error | Hook URL correct; branch exists; Pages Git integration still connected. |
 | Wrangler deploy fails | API token has **Pages → Edit**; account id and project name correct. |

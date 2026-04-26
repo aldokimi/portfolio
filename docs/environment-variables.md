@@ -22,7 +22,7 @@ Used when **Cloudflare builds from Git**.
 
 | Variable | Required | Description |
 |----------|----------|-------------|
-| `NODE_VERSION` | Recommended | e.g. `22.12.0` — matches [`.nvmrc`](../.nvmrc); reduces flaky `npm ci` on the build image. |
+| `NODE_VERSION` | Recommended | e.g. `22.14.0` — matches [`.nvmrc`](../.nvmrc). Must be **≥ 22.13.0** (eslint / Next toolchain); older 22.x causes `EBADENGINE` on Cloudflare. |
 | `PORTFOLIO_REPO` | Yes | `owner/repo` for the GitHub Issues API. |
 | `GITHUB_TOKEN` | Recommended | PAT with **Issues: read** on that repo. |
 

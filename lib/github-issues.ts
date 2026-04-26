@@ -100,16 +100,19 @@ async function fetchIssuesPage(
   };
   if (token) headers.Authorization = `Bearer ${token}`;
 
+  // `force-cache` / `revalidate: false` keeps `/logs` statically prerenderable with `output: 'export'`.
+  // `no-store` forces dynamic data and breaks static export for this route.
   const res = await fetch(url.toString(), {
     headers,
-    cache: "no-store",
+    next: { revalidate: false },
   });
 
   if (!res.ok) {
     const text = await res.text().catch(() => "");
-    throw new Error(
-      `GitHub issues fetch failed (${res.status}): ${text.slice(0, 200)}`,
+    console.warn(
+      `[portfolio] GitHub issues fetch failed (${res.status}) for ${repo}: ${text.slice(0, 200)}`,
     );
+    return [];
   }
 
   return (await res.json()) as GithubIssue[];

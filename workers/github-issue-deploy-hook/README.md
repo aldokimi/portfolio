@@ -15,7 +15,7 @@ Repo docs: [`../../docs/README.md`](../../docs/README.md).
      `npm install --no-audit --no-fund && npm run build` (see [`../../docs/deployment-and-ci.md`](../../docs/deployment-and-ci.md)).
    - **Build output directory:** `out`
 3. **Settings → Environment variables** (Production):
-   - **`NODE_VERSION`** = `22.12.0` (matches [`.nvmrc`](../../.nvmrc)).
+   - **`NODE_VERSION`** = `22.14.0` (matches [`.nvmrc`](../../.nvmrc); need **≥ 22.13.0** for eslint).
    - **`PORTFOLIO_REPO`** = `owner/repo` for Issues (often same as this repo).
    - **`GITHUB_TOKEN`** — PAT with **Issues: read** ([`../../docs/github-token.md`](../../docs/github-token.md)).
 4. Run one successful deploy from the dashboard so the project is live.

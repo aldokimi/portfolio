@@ -1,91 +1,48 @@
-# Personal Portfolio Website
+# Portfolio (static Next.js)
 
-A modern, responsive portfolio website built with Streamlit showcasing professional experience, projects, skills, certifications, and education.
+Cloud-native terminal-themed portfolio with a **Logs** feed backed by **GitHub Issues** (`published` label), static-exported and deployed to **GitHub Pages**.
 
-## Features
+Design spec (source of truth): `../docs/superpowers/specs/2026-04-26-portfolio-website-design.md` in the parent workspace, or copy it into this repo if you prefer docs colocated.
 
-- **Sticky Navigation Bar**: Fixed navigation bar with smooth scrolling to different sections
-- **Responsive Design**: Clean and modern layout with centered content
-- **Project Showcase**: Display projects in a 3-column grid layout with technology stacks
-- **Skills & Certifications**: Organized display of technical expertise and certifications
-- **Work Experience**: Detailed work history with timeline
-- **Education**: Academic background displayed in boxes
-- **Contact Information**: Easy-to-access contact details
-
-## Sections
-
-1. **About Me**: Personal introduction and background
-2. **Work Experience**: Professional roles at RedHat, Nokia, and ELTE
-3. **Education**: Academic qualifications
-4. **Skills & Certifications**: Technical skills and professional certifications
-5. **Projects**: Portfolio of GitHub projects with technology stacks
-6. **Contact**: Contact information and social links
-
-## Technologies Used
-
-- **Python**: Backend development
-- **Streamlit**: Web framework for building the portfolio
-- **HTML/CSS**: Custom styling and layout
-
-## Installation
-
-1. Clone the repository:
-```bash
-git clone <repository-url>
-cd personal-website/python
-```
-
-2. Install dependencies:
-```bash
-pip install -r requirements.txt
-```
-
-## Usage
-
-Run the Streamlit application:
+## Local development
 
 ```bash
-streamlit run test.py
+npm install
+cp .env.example .env.local
+# Set PORTFOLIO_REPO=owner/repo matching this repository.
+npm run dev
 ```
 
-The application will start on `http://localhost:8501` by default.
+## Build (static export)
 
-## Project Structure
-
-```
-portfolio/
-├── test.py              # Main Streamlit application
-├── requirements.txt     # Python dependencies
-└── README.md           # Project documentation
+```bash
+export PORTFOLIO_REPO=your-username/portfolio
+# Optional: export GITHUB_TOKEN=... for higher rate limits
+npm run build
 ```
 
-## Customization
+Output is written to `out/`.
 
-To customize the portfolio:
+## GitHub Pages
 
-1. **Personal Information**: Update the `CONTACT_INFO` dictionary with your details
-2. **Skills**: Modify the `SKILLS` dictionary to reflect your expertise
-3. **Certifications**: Add or update certifications in the `CERTIFICATIONS` list
-4. **Projects**: Update the `PROJECTS` list with your GitHub repositories
-5. **Education**: Modify the `EDUCATION` list with your academic background
-6. **Work Experience**: Update the work experience section with your professional history
+1. Repo **Settings → Pages**: set **Source** to **GitHub Actions**.
+2. Default workflow sets `NEXT_PUBLIC_BASE_PATH` to `/<repository-name>` for project pages (`https://<user>.github.io/<repo>/`).
+3. If you use a **user site** repo (`<user>.github.io`) or a **custom domain** with the site at `/`, remove `NEXT_PUBLIC_BASE_PATH` from `.github/workflows/pages.yml` and from `next.config.ts` usage (leave unset).
 
-## Features Implementation
+## Writing logs
 
-- **Equal Height Boxes**: All boxes in the same row have equal heights for a clean look
-- **Smooth Scrolling**: Navigation links smoothly scroll to respective sections
-- **Hover Effects**: Interactive elements with hover states
-- **Responsive Grid**: 3-column grid layout for projects, skills, and certifications
-- **Sticky Navigation**: Navigation bar remains fixed at the top while scrolling
+1. Open a GitHub Issue in this repo.
+2. Add labels: **`published`** (required). Optionally **`note`** or **`article`**; otherwise length rules infer the card type (see spec).
+3. When the issue is saved, **Actions** rebuilds the site so `/logs/` updates.
 
-## License
+## Labels
 
-This project is personal and proprietary.
+| Label        | Role                                      |
+| ------------ | ----------------------------------------- |
+| `published`  | Issue appears on the site                 |
+| `note`       | Short “log line” card (no detail page)   |
+| `article`    | Excerpt + **Read more** → `/logs/<number>/` |
 
-## Author
+## Empty `article` list
 
-**Mohammed Al-Dokimi**
-
-- Email: mo.aldokimi@gmail.com
-- LinkedIn: [linkedin.com/in/mohammed-al-dokimi-98ba411a5](https://linkedin.com/in/mohammed-al-dokimi-98ba411a5)
-
+`app/logs/[id]/page.tsx` sets `export const revalidate = 0` so `next build` with `output: 'export'` succeeds when there are zero `article` issues (Next otherwise treats an empty `generateStaticParams` as invalid). This is intentional; see Next error **E87** in the build source.

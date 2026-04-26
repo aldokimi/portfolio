@@ -11,8 +11,7 @@ Repo docs: [`../../docs/README.md`](../../docs/README.md).
 1. **Workers & Pages** → **Create** → **Pages** → Connect **GitHub** → select this repo.
 2. **Settings → Builds:**
    - **Production branch:** `main` (or your default).
-   - **Build command:** `npm ci && npm run build` — if installs fail, use  
-     `npm install --no-audit --no-fund && npm run build` (see [`../../docs/deployment-and-ci.md`](../../docs/deployment-and-ci.md)).
+   - **Build command:** **`npm run pages:build`** (recommended on Cloudflare; see [`../../docs/deployment-and-ci.md`](../../docs/deployment-and-ci.md)).
    - **Build output directory:** `out`
 3. **Settings → Environment variables** (Production):
    - **`NODE_VERSION`** = `22.14.0` (matches [`.nvmrc`](../../.nvmrc); need **≥ 22.13.0** for eslint).

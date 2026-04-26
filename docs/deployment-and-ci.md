@@ -14,14 +14,14 @@ The app is a **Next.js static export** (`output: 'export'`). Production output i
 | Field | Value |
 |-------|--------|
 | **Root directory** | `/` (repo root) |
-| **Build command** | `npm ci && npm run build` — if install fails with npm errors, use `npm install --no-audit --no-fund && npm run build` |
+| **Build command** | **`npm run pages:build`** (uses `npm install` + `next build`; more reliable on Cloudflare than `npm ci`). Use `npm ci && npm run build` only if you prefer strict lockfile installs and your builder has enough RAM. |
 | **Build output directory** | `out` |
 
 ### Environment variables (Production)
 
 See [environment-variables.md](environment-variables.md#cloudflare-pages). At minimum:
 
-- **`NODE_VERSION`** = `22.14.0` (matches [`.nvmrc`](../.nvmrc); **≥ 22.13.0** required—see troubleshooting).
+- **`NODE_VERSION`** = `22.14.0` — **required in the Pages dashboard**. If the build log still shows `nodejs@22.12.0`, an old **`NODE_VERSION`** (or the default before `.nvmrc` is applied) is winning; **change or add** `NODE_VERSION` to `22.14.0`, save, redeploy. Dashboard vars override [`.nvmrc`](../.nvmrc) for the install step.
 - **`PORTFOLIO_REPO`** = `owner/repo` for GitHub Issues.
 - **`GITHUB_TOKEN`** — PAT with **Issues: read** ([github-token.md](github-token.md)).
 
@@ -66,7 +66,7 @@ Needs `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` in the environment.
 |--------|--------|
 | `/logs` empty after build | `GITHUB_TOKEN` / `PORTFOLIO_REPO`; Issues have **`published`** label. |
 | `npm warn EBADENGINE` … `eslint-visitor-keys` … `^22.13.0` | Set **`NODE_VERSION`** to **22.14.0** (or any **≥ 22.13.0**) in Pages and match [`.nvmrc`](../.nvmrc). **22.12.0 is too old** for current eslint deps. |
-| Cloudflare: `Exit handler never called` during `npm ci` | Bump **`NODE_VERSION`** as above; try **`npm install --no-audit --no-fund && npm run build`** instead of `npm ci`; retry (often OOM/npm flake on long installs). |
+| Cloudflare: `Exit handler never called` during `npm ci` | Set build command to **`npm run pages:build`** (see [package.json](../package.json) `pages:build`). That avoids `npm clean-install`, which often dies on **low RAM** builders after several minutes. |
 | Worker returns 401 | GitHub webhook **secret** matches Worker `GITHUB_WEBHOOK_SECRET`. |
 | Deploy hook returns error | Hook URL correct; branch exists; Pages Git integration still connected. |
 | Wrangler deploy fails | API token has **Pages → Edit**; account id and project name correct. |

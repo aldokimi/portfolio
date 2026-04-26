@@ -1,6 +1,6 @@
 /**
- * Relays GitHub "issues" webhooks to CircleCI pipeline API.
- * Deploy with Wrangler; set secrets and vars per README in this folder.
+ * Verifies GitHub Issues webhooks, then POSTs to a Cloudflare Pages Deploy Hook
+ * to start a new production build (see Cloudflare dashboard → Pages → Deploy hooks).
  */
 
 function hex(buf) {
@@ -76,25 +76,28 @@ export default {
       });
     }
 
-    const branch = env.BUILD_BRANCH || "main";
-    const url = `https://circleci.com/api/v2/project/github/${env.GH_ORG}/${env.GH_REPO}/pipeline`;
+    const hookUrl = env.PAGES_DEPLOY_HOOK_URL;
+    if (!hookUrl) {
+      return new Response("Missing PAGES_DEPLOY_HOOK_URL secret", { status: 500 });
+    }
 
-    const res = await fetch(url, {
+    const res = await fetch(hookUrl, {
       method: "POST",
-      headers: {
-        "content-type": "application/json",
-        "Circle-Token": env.CIRCLE_API_TOKEN,
-      },
-      body: JSON.stringify({
-        branch,
-        parameters: { issue_refresh: true },
-      }),
+      headers: { "content-type": "application/json" },
+      body: "{}",
     });
 
     const text = await res.text();
-    return new Response(text, {
-      status: res.status,
-      headers: { "content-type": res.headers.get("content-type") || "text/plain" },
-    });
+    return new Response(
+      JSON.stringify({
+        github_action: payload.action,
+        deploy_hook_status: res.status,
+        deploy_hook_body: text.slice(0, 500),
+      }),
+      {
+        status: res.ok ? 200 : 502,
+        headers: { "content-type": "application/json" },
+      },
+    );
   },
 };

@@ -1,0 +1,8 @@
+name = "github-issue-deploy-hook"
+main = "src/index.js"
+compatibility_date = "2024-10-01"
+
+# Secrets (set after first deploy):
+#   npx wrangler@4 secret put GITHUB_WEBHOOK_SECRET
+#   npx wrangler@4 secret put PAGES_DEPLOY_HOOK_URL
+# PAGES_DEPLOY_HOOK_URL = full URL from Cloudflare Pages → Settings → Builds → Deploy hooks

@@ -17,18 +17,32 @@ Design spec: [`docs/superpowers/specs/2026-05-23-admin-blog-d1-design.md`](docs/
 
 ## Local development
 
+**Recommended (isolated deps + Yarn inside Docker)**
+
 ```bash
-npm install
-npm run d1:migrate:local
-npm run dev
+docker compose build
+docker compose run --rm app yarn install
+docker compose run --rm app yarn d1:migrate:local
+docker compose up
 ```
 
-Open **http://localhost:3000**. Admin at **http://localhost:3000/admin/**.
+Or open folder in Cursor / VS Code → **Reopen in Dev Container** (`./.devcontainer` runs `yarn install` on create).
+
+Open **http://localhost:3000**. Admin **http://localhost:3000/admin/**.
+
+**Host Yarn** (still isolated by lockfile):
+
+```bash
+corepack enable
+yarn install
+yarn d1:migrate:local
+yarn dev
+```
 
 ## Deploy
 
 ```bash
-npm run deploy
+yarn deploy
 ```
 
 Requires `wrangler login` and D1 `database_id` set in `wrangler.jsonc`.

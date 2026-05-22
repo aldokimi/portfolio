@@ -8,9 +8,7 @@
 !.yarn/patches
 !.yarn/plugins
 !.yarn/releases
-!.yarn/versions
-
-# testing
+!.yarn/sdks
 /coverage
 
 # next.js

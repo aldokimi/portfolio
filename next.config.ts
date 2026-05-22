@@ -9,6 +9,8 @@ const nextConfig: NextConfig = {
   ...(basePath ? { basePath, assetPrefix: basePath } : {}),
 };
 
-export default nextConfig;
+if (process.env.NODE_ENV === "development") {
+  initOpenNextCloudflareForDev();
+}
 
-initOpenNextCloudflareForDev();
+export default nextConfig;

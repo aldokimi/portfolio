@@ -45,7 +45,7 @@ yarn dev
 yarn deploy
 ```
 
-Requires `wrangler login` and D1 `database_id` set in `wrangler.jsonc`.
+Requires `wrangler login` and D1 `database_id` set in `wrangler.jsonc`. On **Cloudflare Pages**, build with `yarn cf:build` (see [deployment-and-ci.md](docs/deployment-and-ci.md)), not `yarn build` alone.
 
 ## Logs
 

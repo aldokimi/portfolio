@@ -9,7 +9,7 @@ const SCRIPT = [
   "$ kubectl get roles --namespace career",
   "genesys (current) · redhat · nokia · elte (teaching / research)",
   "$ open logs --follow",
-  "Ideas & write-ups stream from GitHub Issues → static export → Cloudflare Pages.",
+  "Ideas & write-ups live on /logs — written in admin, served from the edge.",
 ];
 
 export function TerminalHero() {

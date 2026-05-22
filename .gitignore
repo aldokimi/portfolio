@@ -16,6 +16,12 @@
 # next.js
 /.next/
 /out/
+.open-next/
+.wrangler/
+
+# cloudflare
+cloudflare-env.d.ts
+.dev.vars
 
 # production
 /build
@@ -39,3 +45,6 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+.cursor/
+docs/superpowers/

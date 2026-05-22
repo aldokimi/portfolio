@@ -36,7 +36,7 @@ export default function RootLayout({
         <SiteHeader />
         {children}
         <footer className="border-t border-slate-800/80 py-6 text-center font-mono text-[11px] text-slate-600">
-          Static export · GitHub Issues → Cloudflare Pages
+          Cloudflare Workers · D1
         </footer>
       </body>
     </html>

@@ -38,4 +38,5 @@ npm run preview
 | `D1 binding DB is not configured` | `wrangler.jsonc` binding name is `DB`; redeploy after config change |
 | Admin 404 in prod | Route is `/admin/`; Access app path matches |
 | Build fails on Next peer dep | Next.js **≥ 16.2.6** for current `@opennextjs/cloudflare` |
+| `npm ci` — lock file out of sync / missing `esbuild@0.28.0` | Commit updated `package-lock.json`; run `npm install` locally before push |
 | Local admin works, prod empty DB | Run `npm run d1:migrate:remote` |

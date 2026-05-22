@@ -31,6 +31,18 @@ Zero Trust → **Access** → **Applications** → add self-hosted app:
 
 No in-app login. Access handles auth at the edge.
 
+### 4. Worker binding types (`worker-configuration.d.ts`)
+
+Regenerate from [`wrangler.jsonc`](../wrangler.jsonc) after binding changes (same as Cloudflare’s `npx wrangler types`; this repo wraps it):
+
+```bash
+yarn cf-typegen
+```
+
+Uses **`--include-runtime=false`** so file stays small and safe to commit. Full runtime dump (huge): `yarn wrangler types --config wrangler.jsonc --env-interface CloudflareEnv`.
+
+CI: `yarn cf-typegen:check` fails if committed types drift vs current `wrangler.jsonc`.
+
 ---
 
 ## Local development

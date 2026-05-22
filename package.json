@@ -9,14 +9,15 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build --webpack",
-    "cf:build": "opennextjs-cloudflare build",
+    "cf:build": "yarn cf-typegen && opennextjs-cloudflare build",
     "preview": "yarn cf:build && opennextjs-cloudflare preview",
     "deploy": "yarn cf:build && opennextjs-cloudflare deploy",
     "test": "vitest run",
     "test:watch": "vitest",
     "d1:migrate:local": "wrangler d1 migrations apply portfolio-posts --local",
     "d1:migrate:remote": "wrangler d1 migrations apply portfolio-posts --remote",
-    "cf-typegen": "wrangler types --env-interface CloudflareEnv cloudflare-env.d.ts",
+    "cf-typegen": "wrangler types --config wrangler.jsonc --env-interface CloudflareEnv --include-runtime=false",
+    "cf-typegen:check": "wrangler types --check --config wrangler.jsonc --env-interface CloudflareEnv --include-runtime=false worker-configuration.d.ts",
     "lint": "eslint"
   },
   "dependencies": {

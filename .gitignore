@@ -18,7 +18,6 @@
 .wrangler/
 
 # cloudflare
-cloudflare-env.d.ts
 .dev.vars
 
 # production

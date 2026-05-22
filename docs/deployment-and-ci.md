@@ -55,4 +55,4 @@ yarn preview
 | Build hangs / dies after `Running TypeScript` on Pages | Often OOM — set `NODE_OPTIONS=--max-old-space-size=6144`; use `yarn cf:build` not `yarn build` |
 | Build fails on Next peer dep | Next.js **≥ 16.2.6** for current `@opennextjs/cloudflare` |
 | `yarn install --immutable` fails (lock out of sync) | Run `yarn install`, commit `yarn.lock` |
-| Local admin works, prod empty DB | Run `yarn d1:migrate:remote` |
+| `yarn cf-typegen:check` fails in CI | Run `yarn cf-typegen`, commit updated `worker-configuration.d.ts` |

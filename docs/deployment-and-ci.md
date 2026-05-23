@@ -45,11 +45,28 @@ yarn preview
 
 ---
 
-## 4. Troubleshooting
+## 4. Deploy failed: D1 `database_id`
+
+If Wrangler / Pages shows:
+
+> `binding DB of type d1 must have a valid database_id specified` **[code 10021]**
+
+Then `wrangler.jsonc` still has a **placeholder** or wrong UUID.
+
+1. Create DB (once): `npx wrangler d1 create portfolio-posts`
+2. Copy the printed **`database_id`** (UUID) into `wrangler.jsonc` → `d1_databases[0].database_id`
+3. Apply schema remotely: `yarn d1:migrate:remote`
+4. Redeploy
+
+`database_name` alone is not enough for deploy — **`database_id` is required**.
+
+---
+
+## 5. Troubleshooting
 
 | Symptom | Check |
 |--------|--------|
-| `/logs` empty but posts exist | D1 migrations applied on remote; `database_id` in wrangler.jsonc |
+| Deploy **10021** — invalid D1 `database_id` | Replace placeholder in `wrangler.jsonc` with UUID from `wrangler d1 create`; run `yarn d1:migrate:remote` |
 | `D1 binding DB is not configured` | `wrangler.jsonc` binding name is `DB`; redeploy after config change |
 | Admin 404 in prod | Route is `/admin/`; Access app path matches |
 | Build hangs / dies after `Running TypeScript` on Pages | Often OOM — set `NODE_OPTIONS=--max-old-space-size=6144`; use `yarn cf:build` not `yarn build` |

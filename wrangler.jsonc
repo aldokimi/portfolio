@@ -18,7 +18,7 @@
     {
       "binding": "DB",
       "database_name": "portfolio-posts",
-      "database_id": "REPLACE_AFTER_wrangler_d1_create"
+      "database_id": "dfded844-548e-4ea0-9717-bfc36215ed79"
     }
   ]
 }

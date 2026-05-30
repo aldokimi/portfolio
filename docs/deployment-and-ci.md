@@ -68,6 +68,7 @@ Then `wrangler.jsonc` still has a **placeholder** or wrong UUID.
 |--------|--------|
 | Deploy **10021** — invalid D1 `database_id` | Replace placeholder in `wrangler.jsonc` with UUID from `wrangler d1 create`; run `yarn d1:migrate:remote` |
 | `D1 binding DB is not configured` | `wrangler.jsonc` binding name is `DB`; redeploy after config change |
+| Admin: *Posts table is missing* | Run `yarn d1:migrate:remote` after `wrangler login` — deploy alone does not create D1 tables |
 | Admin 404 in prod | Route is `/admin/`; Access app path matches |
 | Build hangs / dies after `Running TypeScript` on Pages | Often OOM — set `NODE_OPTIONS=--max-old-space-size=6144`; use `yarn cf:build` not `yarn build` |
 | Build fails on Next peer dep | Next.js **≥ 16.2.6** for current `@opennextjs/cloudflare` |

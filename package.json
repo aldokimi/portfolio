@@ -12,6 +12,7 @@
     "cf:build": "yarn cf-typegen && opennextjs-cloudflare build",
     "preview": "yarn cf:build && opennextjs-cloudflare preview",
     "deploy": "yarn cf:build && opennextjs-cloudflare deploy",
+    "deploy:prod": "yarn d1:migrate:remote && yarn deploy",
     "test": "vitest run",
     "test:watch": "vitest",
     "d1:migrate:local": "wrangler d1 migrations apply portfolio-posts --local",

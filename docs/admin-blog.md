@@ -18,8 +18,25 @@ Copy the `database_id` into `wrangler.jsonc` → `d1_databases[0].database_id`.
 
 ```bash
 yarn d1:migrate:local    # local dev
-yarn d1:migrate:remote   # production
+yarn d1:migrate:remote   # production (required once per D1 database)
 ```
+
+**Production:** `yarn deploy` does **not** run migrations automatically. If admin shows *“Posts table is missing”*, the remote D1 never got the schema — run the commands below.
+
+```bash
+npx wrangler login
+yarn d1:migrate:remote
+```
+
+Confirm tables exist:
+
+```bash
+yarn wrangler d1 execute portfolio-posts --remote --command "SELECT name FROM sqlite_master WHERE type='table';"
+```
+
+You should see `posts` in the result. No redeploy needed after migrate; retry `/admin/` immediately.
+
+For future deploys from your machine: `yarn deploy:prod` (migrates, then builds and deploys).
 
 ### 3. Cloudflare Access
 

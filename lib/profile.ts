@@ -76,14 +76,56 @@ export const profile = {
       href: "https://github.com/aldokimi",
       external: true,
     },
-    {
-      label: "Streamlit apps",
-      href: "https://aldokimi.streamlit.app/",
-      external: true,
-    },
     { label: "Phone", href: "tel:+36301589147" },
   ] satisfies ProfileLink[],
 };
+
+export type ServiceOffering = {
+  id: string;
+  title: string;
+  summary: string;
+  items: string[];
+};
+
+/** Consulting & coaching offerings (contact page). */
+export const serviceOfferings: ServiceOffering[] = [
+  {
+    id: "consulting",
+    title: "Technical consulting",
+    summary:
+      "Architecture, platform engineering, and cloud-native delivery for teams shipping at scale.",
+    items: [
+      "System design & architecture reviews",
+      "AWS, OpenShift, and Kubernetes",
+      "Security engineering & hardening",
+      "Automation, CI/CD, and internal platforms",
+    ],
+  },
+  {
+    id: "coaching",
+    title: "Career coaching",
+    summary:
+      "Practical guidance for engineers targeting senior roles, leadership, or specialist tracks.",
+    items: [
+      "Interview and system-design prep",
+      "Resume, LinkedIn, and narrative review",
+      "Career path and growth planning",
+      "Certification strategy (e.g. Red Hat, cloud)",
+    ],
+  },
+  {
+    id: "solutions",
+    title: "IT solutions",
+    summary:
+      "Hands-on build work: backends, integrations, and tooling from idea to production.",
+    items: [
+      "Go / Python microservices & APIs",
+      "Integrations and legacy modernization",
+      "PoCs, dashboards, and internal tools",
+      "Workshops (C, systems, imperative programming)",
+    ],
+  },
+];
 
 export const experience: ExperienceEntry[] = [
   {

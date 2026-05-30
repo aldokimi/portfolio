@@ -5,11 +5,13 @@ import { useEffect, useMemo, useState } from "react";
 
 const SCRIPT = [
   "$ whoami",
-  "Mohammed Al-Dokimi — software engineer (Go, Python, cloud-native platforms)",
+  "Mohammed Al-Dokimi — software engineer (Go, Python, cloud-native)",
+  "$ kubectl get certs --namespace career",
+  "RHCA · RHCE · OpenShift · Containers (Red Hat)",
   "$ kubectl get roles --namespace career",
   "genesys (current) · redhat · nokia · elte (teaching / research)",
   "$ open logs --follow",
-  "Ideas & write-ups live on /logs — written in admin, served from the edge.",
+  "Write-ups on /logs — this site runs on Cloudflare Workers + D1.",
 ];
 
 export function TerminalHero() {

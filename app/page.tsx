@@ -1,87 +1,109 @@
+import { CertGrid } from "@/components/CertGrid";
+import { ContactStrip } from "@/components/ContactStrip";
+import { EducationBlock } from "@/components/EducationBlock";
+import { ExperienceNode } from "@/components/ExperienceNode";
+import { ProjectCard } from "@/components/ProjectCard";
+import { SkillsTerminal } from "@/components/SkillsTerminal";
 import { TerminalHero } from "@/components/TerminalHero";
+import { experience, profile, projects } from "@/lib/profile";
 
-const roles = [
-  {
-    id: "genesys",
-    title: "Genesys — Software Engineer",
-    period: "Feb 2026 – present",
-    impact:
-      "Microservices, AI-assisted diagnostics, AWS cost-aware architecture, internal platforms.",
-    stack: "Go, Java, Python, Kubernetes, AWS",
-  },
-  {
-    id: "redhat",
-    title: "Red Hat — Software Developer",
-    period: "Jan 2024 – Feb 2026",
-    impact:
-      "Backends and automation against OpenStack & Kubernetes; IaC/CaaS; CI/CD and security posture.",
-    stack: "Go, Python, Terraform, Ansible, OpenShift, Jenkins",
-  },
-  {
-    id: "nokia",
-    title: "Nokia — Software Developer",
-    period: "Aug 2021 – Jan 2024",
-    impact:
-      "Telco cloud security, identity systems, Nokia CloudBand / NCS integration, hardened pipelines.",
-    stack: "Python, Go, Kubernetes, OpenStack, Jenkins",
-  },
-  {
-    id: "elte",
-    title: "ELTE — Teaching / research",
-    period: "Feb 2021 – present",
-    impact:
-      "Courses from Java to imperative C; quantum simulation with Python & Qiskit; senior demonstrator.",
-    stack: "C, C++, Python, Qiskit",
-  },
-];
+function SectionHeading({
+  id,
+  label,
+  title,
+}: {
+  id?: string;
+  label: string;
+  title: string;
+}) {
+  return (
+    <header id={id} className="scroll-mt-20 space-y-1">
+      <p className="font-mono text-xs uppercase tracking-[0.25em] text-cyan-500/90">
+        {label}
+      </p>
+      <h2 className="font-mono text-sm uppercase tracking-[0.2em] text-slate-400">
+        {title}
+      </h2>
+    </header>
+  );
+}
 
 export default function Home() {
   return (
     <main className="mx-auto w-full max-w-3xl flex-1 space-y-14 px-4 py-12">
-      <section className="space-y-4">
-        <p className="font-mono text-xs uppercase tracking-[0.25em] text-cyan-500/90">
-          Architecture
-        </p>
+      <section id="top" className="scroll-mt-20 space-y-6">
+        <SectionHeading label="Architecture" title="System overview" />
         <TerminalHero />
+        <div className="space-y-3">
+          <p className="text-sm leading-relaxed text-slate-300">{profile.bio}</p>
+          <p className="font-mono text-[11px] text-slate-500">{profile.location}</p>
+          <ContactStrip variant="compact" />
+        </div>
       </section>
 
       <section className="space-y-4">
-        <h2 className="font-mono text-sm uppercase tracking-[0.2em] text-slate-400">
-          Experience nodes
-        </h2>
+        <SectionHeading
+          id="experience"
+          label="Experience"
+          title="Experience nodes"
+        />
         <div className="space-y-2">
-          {roles.map((role) => (
-            <details
+          {experience.map((role, index) => (
+            <ExperienceNode
               key={role.id}
-              className="group rounded-lg border border-slate-800 bg-slate-900/35 open:border-cyan-500/25"
-            >
-              <summary className="cursor-pointer list-none px-4 py-3 font-mono text-sm text-slate-100 marker:content-none [&::-webkit-details-marker]:hidden">
-                <span className="flex flex-wrap items-baseline justify-between gap-2">
-                  <span className="text-cyan-200/90 group-open:text-cyan-300">
-                    {role.title}
-                  </span>
-                  <span className="text-[11px] uppercase tracking-widest text-slate-500">
-                    {role.period}
-                  </span>
-                </span>
-              </summary>
-              <div className="space-y-3 border-t border-slate-800/80 px-4 py-4 text-sm text-slate-300">
-                <div>
-                  <h3 className="font-mono text-[11px] uppercase tracking-widest text-slate-500">
-                    Impact
-                  </h3>
-                  <p className="mt-1">{role.impact}</p>
-                </div>
-                <div>
-                  <h3 className="font-mono text-[11px] uppercase tracking-widest text-slate-500">
-                    Stack
-                  </h3>
-                  <p className="mt-1 font-mono text-xs text-cyan-100/80">{role.stack}</p>
-                </div>
-              </div>
-            </details>
+              role={role}
+              pulseChevron={index === 0}
+            />
           ))}
         </div>
+      </section>
+
+      <section className="space-y-4">
+        <SectionHeading id="skills" label="Skills" title="Inventory" />
+        <SkillsTerminal />
+      </section>
+
+      <section className="space-y-4">
+        <SectionHeading
+          id="certs"
+          label="Certifications"
+          title="Trust store"
+        />
+        <CertGrid />
+      </section>
+
+      <section className="space-y-4">
+        <SectionHeading id="education" label="Education" title="Records" />
+        <EducationBlock />
+      </section>
+
+      <section className="space-y-4">
+        <SectionHeading
+          id="projects"
+          label="Projects"
+          title="Featured repositories"
+        />
+        <div className="grid gap-3 sm:grid-cols-2">
+          {projects.map((project) => (
+            <ProjectCard key={project.url} project={project} />
+          ))}
+        </div>
+        <p className="font-mono text-xs text-slate-500">
+          More on{" "}
+          <a
+            href="https://github.com/aldokimi"
+            className="text-cyan-400/90 hover:text-cyan-300"
+            rel="noreferrer"
+            target="_blank"
+          >
+            github.com/aldokimi
+          </a>
+        </p>
+      </section>
+
+      <section id="contact" className="scroll-mt-20 space-y-4">
+        <SectionHeading label="Ping" title="Contact" />
+        <ContactStrip variant="full" />
       </section>
     </main>
   );

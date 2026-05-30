@@ -1,7 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
   certifications,
-  education,
   experience,
   profile,
   projects,
@@ -30,8 +29,8 @@ describe("profile data", () => {
     expect(certifications).toHaveLength(8);
   });
 
-  it("has six featured projects", () => {
-    expect(projects).toHaveLength(6);
+  it("has five featured projects", () => {
+    expect(projects).toHaveLength(5);
   });
 
   it("has seven skill categories", () => {

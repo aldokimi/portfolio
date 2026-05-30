@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { SiteHeader } from "@/components/SiteHeader";
+import { profile } from "@/lib/profile";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -15,11 +16,10 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: {
-    default: "Mohammed Al-Dokimi",
-    template: "%s · Mohammed Al-Dokimi",
+    default: profile.name,
+    template: `%s · ${profile.name}`,
   },
-  description:
-    "Software engineer — Go, Python, Kubernetes, platforms, and automation.",
+  description: profile.bio.slice(0, 160),
 };
 
 export default function RootLayout({

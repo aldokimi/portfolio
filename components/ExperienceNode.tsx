@@ -1,4 +1,5 @@
 import type { ExperienceEntry } from "@/lib/profile";
+import Link from "next/link";
 
 export function ExperienceNode({
   role,
@@ -7,7 +8,7 @@ export function ExperienceNode({
   role: ExperienceEntry;
   pulseChevron?: boolean;
 }) {
-  const kubectlHint = `kubectl describe role/${role.id}`;
+  const dokictlHint = `dokictl describe role/${role.id}`;
 
   return (
     <details
@@ -40,9 +41,12 @@ export function ExperienceNode({
               <span className="text-cyan-400/90">
                 +{role.bullets.length} details
               </span>
-              <span className="text-slate-600 group-open:hidden">
-                {kubectlHint}
-              </span>
+              <Link
+                href={`/terminal/?cmd=${encodeURIComponent(dokictlHint)}`}
+                className="text-slate-600 hover:text-cyan-400/90 group-open:hidden"
+              >
+                {dokictlHint}
+              </Link>
             </div>
           </div>
           <span

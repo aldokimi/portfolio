@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   certifications,
+  education,
   experience,
   profile,
   projects,
@@ -25,8 +26,14 @@ describe("profile data", () => {
     }
   });
 
-  it("lists eight certifications", () => {
-    expect(certifications).toHaveLength(8);
+  it("lists red hat certifications", () => {
+    expect(certifications).toHaveLength(11);
+    expect(certifications.some((c) => c.highlight)).toBe(true);
+  });
+
+  it("has three education records", () => {
+    expect(education).toHaveLength(3);
+    expect(education[0].degree).toContain("Computer Science");
   });
 
   it("has five featured projects", () => {

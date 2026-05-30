@@ -32,4 +32,48 @@ body {
   .chevron-hint {
     animation: chevron-hint 1s ease-in-out 2;
   }
+
+  .cluster-orbit-spin {
+    animation: cluster-orbit-spin 24s linear infinite;
+  }
+
+  .cluster-core-pulse {
+    animation: cluster-core-pulse 3s ease-in-out infinite;
+  }
+}
+
+.preserve-3d {
+  transform-style: preserve-3d;
+}
+
+@keyframes cluster-orbit-spin {
+  from {
+    transform: rotateX(58deg) rotateZ(0deg);
+  }
+  to {
+    transform: rotateX(58deg) rotateZ(360deg);
+  }
+}
+
+@keyframes cluster-core-pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 32px -4px rgba(34, 211, 238, 0.55);
+  }
+  50% {
+    box-shadow: 0 0 40px 0 rgba(34, 211, 238, 0.75);
+  }
+}
+
+.cluster-scene {
+  transform: rotateX(12deg) rotateY(-8deg);
+}
+
+.cluster-orbit {
+  transform: rotateX(58deg);
+}
+
+.cluster-pod-anchor {
+  transform: rotateZ(var(--orbit-deg)) translateY(-4.25rem)
+    rotateZ(calc(-1 * var(--orbit-deg)));
 }

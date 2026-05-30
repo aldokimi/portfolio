@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { SiteFooter } from "@/components/SiteFooter";
 import { SiteHeader } from "@/components/SiteHeader";
 import { profile } from "@/lib/profile";
 import "./globals.css";
@@ -35,9 +36,7 @@ export default function RootLayout({
       <body className="flex min-h-full flex-col bg-slate-950 text-slate-100">
         <SiteHeader />
         {children}
-        <footer className="border-t border-slate-800/80 py-6 text-center font-mono text-[11px] text-slate-600">
-          Cloudflare Workers · D1
-        </footer>
+        <SiteFooter />
       </body>
     </html>
   );

@@ -4,5 +4,6 @@
   "service": "app",
   "workspaceFolder": "/workspace",
   "forwardPorts": [3000],
-  "postCreateCommand": "yarn install && yarn cf-typegen && yarn d1:migrate:local"
+  "postCreateCommand": "yarn install && yarn cf-typegen && yarn d1:migrate:local",
+  "postStartCommand": "yarn cf-typegen"
 }

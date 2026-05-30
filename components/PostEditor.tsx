@@ -3,15 +3,22 @@
 import { MarkdownArticle } from "@/components/MarkdownArticle";
 import { slugify } from "@/lib/post-utils";
 import type { Post, PostStatus } from "@/lib/types/post";
-import { useState, useTransition } from "react";
+import { noopAction } from "@/app/admin/actions";
+import { useActionState, useState } from "react";
+
+type ActionState = { error?: string; ok?: true } | null;
 
 type PostEditorProps = {
   mode: "create" | "edit";
   post?: Post;
   saveAction: (
+    prev: ActionState,
     formData: FormData,
-  ) => Promise<{ error?: string; ok?: true } | void>;
-  deleteAction?: (id: number) => Promise<{ error?: string } | void>;
+  ) => Promise<ActionState>;
+  deleteAction?: (
+    prev: { error?: string } | null,
+    formData: FormData,
+  ) => Promise<{ error?: string } | null>;
 };
 
 export function PostEditor({
@@ -24,8 +31,15 @@ export function PostEditor({
   const [slug, setSlug] = useState(post?.slug ?? "");
   const [body, setBody] = useState(post?.body ?? "");
   const [slugTouched, setSlugTouched] = useState(mode === "edit");
-  const [error, setError] = useState<string | null>(null);
-  const [pending, startTransition] = useTransition();
+
+  const [saveState, saveFormAction, savePending] = useActionState(
+    saveAction,
+    null,
+  );
+  const [deleteState, deleteFormAction, deletePending] = useActionState(
+    deleteAction ?? noopAction,
+    null,
+  );
 
   function handleTitleChange(value: string) {
     setTitle(value);
@@ -34,36 +48,9 @@ export function PostEditor({
     }
   }
 
-  function submit(intent: "draft" | "publish" | "unpublish") {
-    setError(null);
-    const formData = new FormData();
-    formData.set("title", title);
-    formData.set("slug", slug);
-    formData.set("body", body);
-    formData.set("intent", intent);
-
-    startTransition(async () => {
-      const result = await saveAction(formData);
-      if (result && "error" in result && result.error) {
-        setError(result.error);
-      }
-    });
-  }
-
-  function handleDelete() {
-    if (!post || !deleteAction) return;
-    if (!window.confirm(`Delete "${post.title}"? This cannot be undone.`)) {
-      return;
-    }
-    startTransition(async () => {
-      const result = await deleteAction(post.id);
-      if (result && "error" in result && result.error) {
-        setError(result.error);
-      }
-    });
-  }
-
   const status: PostStatus = post?.status ?? "draft";
+  const error = saveState?.error ?? deleteState?.error ?? null;
+  const pending = savePending || deletePending;
 
   return (
     <div className="space-y-6">
@@ -82,98 +69,133 @@ export function PostEditor({
         </p>
       ) : null}
 
-      <div className="grid gap-6 lg:grid-cols-2">
-        <div className="space-y-4">
-          <label className="block space-y-1">
-            <span className="font-mono text-[11px] uppercase tracking-widest text-slate-500">
-              Title
-            </span>
-            <input
-              value={title}
-              onChange={(e) => handleTitleChange(e.target.value)}
-              className="w-full rounded-lg border border-slate-800 bg-slate-950 px-3 py-2 font-mono text-sm text-slate-100 outline-none focus:border-cyan-500/50"
-            />
-          </label>
+      {saveState?.ok ? (
+        <p className="rounded-lg border border-emerald-500/40 bg-emerald-500/10 px-4 py-2 font-mono text-sm text-emerald-300">
+          Saved.
+        </p>
+      ) : null}
 
-          <label className="block space-y-1">
-            <span className="font-mono text-[11px] uppercase tracking-widest text-slate-500">
-              Slug
-            </span>
-            <input
-              value={slug}
-              onChange={(e) => {
-                setSlugTouched(true);
-                setSlug(e.target.value);
-              }}
-              className="w-full rounded-lg border border-slate-800 bg-slate-950 px-3 py-2 font-mono text-sm text-slate-100 outline-none focus:border-cyan-500/50"
-            />
-          </label>
+      <form action={saveFormAction} className="space-y-6">
+        {mode === "edit" && post ? (
+          <input type="hidden" name="postId" value={post.id} />
+        ) : null}
 
-          <label className="block space-y-1">
-            <span className="font-mono text-[11px] uppercase tracking-widest text-slate-500">
-              Body (markdown)
-            </span>
-            <textarea
-              value={body}
-              onChange={(e) => setBody(e.target.value)}
-              rows={18}
-              className="w-full resize-y rounded-lg border border-slate-800 bg-slate-950 px-3 py-2 font-mono text-sm leading-relaxed text-slate-100 outline-none focus:border-cyan-500/50"
-            />
-          </label>
-        </div>
+        <div className="grid gap-6 lg:grid-cols-2">
+          <div className="space-y-4">
+            <label className="block space-y-1">
+              <span className="font-mono text-[11px] uppercase tracking-widest text-slate-500">
+                Title
+              </span>
+              <input
+                name="title"
+                value={title}
+                onChange={(e) => handleTitleChange(e.target.value)}
+                required
+                className="w-full rounded-lg border border-slate-800 bg-slate-950 px-3 py-2 font-mono text-sm text-slate-100 outline-none focus:border-cyan-500/50"
+              />
+            </label>
 
-        <div className="space-y-2">
-          <p className="font-mono text-[11px] uppercase tracking-widest text-slate-500">
-            Preview
-          </p>
-          <div className="min-h-[24rem] rounded-lg border border-slate-800 bg-slate-900/35 p-4">
-            {body.trim() ? (
-              <MarkdownArticle source={body} />
-            ) : (
-              <p className="font-mono text-sm text-slate-600">Nothing yet.</p>
-            )}
+            <label className="block space-y-1">
+              <span className="font-mono text-[11px] uppercase tracking-widest text-slate-500">
+                Slug
+              </span>
+              <input
+                name="slug"
+                value={slug}
+                onChange={(e) => {
+                  setSlugTouched(true);
+                  setSlug(e.target.value);
+                }}
+                required
+                className="w-full rounded-lg border border-slate-800 bg-slate-950 px-3 py-2 font-mono text-sm text-slate-100 outline-none focus:border-cyan-500/50"
+              />
+            </label>
+
+            <label className="block space-y-1">
+              <span className="font-mono text-[11px] uppercase tracking-widest text-slate-500">
+                Body (markdown)
+              </span>
+              <textarea
+                name="body"
+                value={body}
+                onChange={(e) => setBody(e.target.value)}
+                rows={18}
+                className="w-full resize-y rounded-lg border border-slate-800 bg-slate-950 px-3 py-2 font-mono text-sm leading-relaxed text-slate-100 outline-none focus:border-cyan-500/50"
+              />
+            </label>
+          </div>
+
+          <div className="space-y-2">
+            <p className="font-mono text-[11px] uppercase tracking-widest text-slate-500">
+              Preview
+            </p>
+            <div className="min-h-[24rem] rounded-lg border border-slate-800 bg-slate-900/35 p-4">
+              {body.trim() ? (
+                <MarkdownArticle source={body} />
+              ) : (
+                <p className="font-mono text-sm text-slate-600">Nothing yet.</p>
+              )}
+            </div>
           </div>
         </div>
-      </div>
 
-      <div className="flex flex-wrap gap-3">
-        <button
-          type="button"
-          disabled={pending}
-          onClick={() => submit("draft")}
-          className="rounded-lg border border-slate-700 px-4 py-2 font-mono text-xs uppercase tracking-widest text-slate-300 hover:border-slate-500 disabled:opacity-50"
-        >
-          Save draft
-        </button>
-        <button
-          type="button"
-          disabled={pending}
-          onClick={() => submit("publish")}
-          className="rounded-lg border border-emerald-500/40 bg-emerald-500/10 px-4 py-2 font-mono text-xs uppercase tracking-widest text-emerald-300 hover:bg-emerald-500/20 disabled:opacity-50"
-        >
-          Publish
-        </button>
-        {status === "published" ? (
+        <div className="flex flex-wrap gap-3">
           <button
-            type="button"
+            type="submit"
+            name="intent"
+            value="draft"
             disabled={pending}
-            onClick={() => submit("unpublish")}
-            className="rounded-lg border border-amber-500/40 bg-amber-500/10 px-4 py-2 font-mono text-xs uppercase tracking-widest text-amber-300 hover:bg-amber-500/20 disabled:opacity-50"
+            className="rounded-lg border border-slate-700 px-4 py-2 font-mono text-xs uppercase tracking-widest text-slate-300 hover:border-slate-500 disabled:opacity-50"
           >
-            Unpublish
+            Save draft
           </button>
-        ) : null}
-        {mode === "edit" && deleteAction ? (
           <button
-            type="button"
+            type="submit"
+            name="intent"
+            value="publish"
             disabled={pending}
-            onClick={handleDelete}
+            className="rounded-lg border border-emerald-500/40 bg-emerald-500/10 px-4 py-2 font-mono text-xs uppercase tracking-widest text-emerald-300 hover:bg-emerald-500/20 disabled:opacity-50"
+          >
+            Publish
+          </button>
+          {status === "published" ? (
+            <button
+              type="submit"
+              name="intent"
+              value="unpublish"
+              disabled={pending}
+              className="rounded-lg border border-amber-500/40 bg-amber-500/10 px-4 py-2 font-mono text-xs uppercase tracking-widest text-amber-300 hover:bg-amber-500/20 disabled:opacity-50"
+            >
+              Unpublish
+            </button>
+          ) : null}
+        </div>
+      </form>
+
+      {mode === "edit" && post && deleteAction ? (
+        <form
+          action={deleteFormAction}
+          className="border-t border-slate-800/80 pt-6"
+          onSubmit={(e) => {
+            if (
+              !window.confirm(
+                `Delete "${post.title}"? This cannot be undone.`,
+              )
+            ) {
+              e.preventDefault();
+            }
+          }}
+        >
+          <input type="hidden" name="postId" value={post.id} />
+          <button
+            type="submit"
+            disabled={pending}
             className="rounded-lg border border-red-500/40 px-4 py-2 font-mono text-xs uppercase tracking-widest text-red-300 hover:bg-red-500/10 disabled:opacity-50"
           >
             Delete
           </button>
-        ) : null}
-      </div>
+        </form>
+      ) : null}
     </div>
   );
 }

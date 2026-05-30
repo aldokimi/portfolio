@@ -25,11 +25,13 @@ yarn d1:migrate:remote   # production
 
 Zero Trust → **Access** → **Applications** → add self-hosted app:
 
-- **Domain:** your production hostname
-- **Path:** `/admin`
+- **Domain:** your production hostname (or `*.workers.dev` subdomain)
+- **Path:** `/admin` — enable **Include subpaths** (covers `/admin/posts/new/`, edit pages, and form POSTs for Server Actions)
 - **Policy:** allow your email only
 
 No in-app login. Access handles auth at the edge.
+
+If saves fail after login with no error, widen the Access application path to `/admin*` or add a second policy for `/_next/*` only if your deployment routes actions outside `/admin` (unusual for this app).
 
 ### 4. Worker binding types (`worker-configuration.d.ts`)
 
@@ -50,8 +52,9 @@ CI: `yarn cf-typegen:check` fails if committed types drift vs current `wrangler.
 **Docker (recommended — install runs inside Linux container)**
 
 ```bash
-docker compose build
+docker compose build --pull
 docker compose run --rm app yarn install
+docker compose run --rm app yarn cf-typegen
 docker compose run --rm app yarn d1:migrate:local
 docker compose up
 ```

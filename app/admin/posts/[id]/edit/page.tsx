@@ -28,14 +28,13 @@ export default async function EditPostPage({
   const post = await getPostById(num);
   if (!post) notFound();
 
-  const saveAction = updatePostAction.bind(null, num);
-
   return (
     <main className="mx-auto max-w-6xl flex-1 px-4 py-12">
       <PostEditor
+        key={post.id}
         mode="edit"
         post={post}
-        saveAction={saveAction}
+        saveAction={updatePostAction}
         deleteAction={deletePostAction}
       />
     </main>

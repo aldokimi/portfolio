@@ -20,11 +20,14 @@ Design spec: [`docs/superpowers/specs/2026-05-23-admin-blog-d1-design.md`](docs/
 **Recommended (isolated deps + Yarn inside Docker)**
 
 ```bash
-docker compose build
+docker compose build --pull
 docker compose run --rm app yarn install
+docker compose run --rm app yarn cf-typegen
 docker compose run --rm app yarn d1:migrate:local
 docker compose up
 ```
+
+`node_modules` lives in a Docker volume (not on the host). After changing `package.json` or `yarn.lock`, run `yarn install` inside the container again.
 
 Or open folder in Cursor / VS Code → **Reopen in Dev Container** (`./.devcontainer` runs `yarn install` on create).
 

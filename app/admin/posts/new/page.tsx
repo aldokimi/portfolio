@@ -1,6 +1,8 @@
 import { PostEditor } from "@/components/PostEditor";
 import { createPostAction } from "@/app/admin/actions";
 
+export const dynamic = "force-dynamic";
+
 export const metadata = { title: "New post" };
 
 export default function NewPostPage() {

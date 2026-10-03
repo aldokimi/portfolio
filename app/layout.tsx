@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { SiteFooter } from "@/components/SiteFooter";
 import { SiteHeader } from "@/components/SiteHeader";
+import LenisScroll from "@/components/LenisScroll";
 import { profile } from "@/lib/profile";
 import "./globals.css";
 
@@ -33,10 +34,12 @@ export default function RootLayout({
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="flex min-h-full flex-col bg-slate-950 text-slate-100">
-        <SiteHeader />
-        {children}
-        <SiteFooter />
+      <body className="flex min-h-full flex-col bg-[var(--bg)] text-[var(--fg)]">
+        <LenisScroll>
+          <SiteHeader />
+          {children}
+          <SiteFooter />
+        </LenisScroll>
       </body>
     </html>
   );

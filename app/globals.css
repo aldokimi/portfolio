@@ -1,79 +1,133 @@
 @import "tailwindcss";
 
 :root {
-  --background: #020617;
-  --foreground: #e2e8f0;
-  --accent: #22d3ee;
+  --bg: #FAFAFA;
+  --fg: #09090B;
+  --accent: #2563EB;
+  --card: #FFFFFF;
+  --border: #E4E4E7;
+  --muted: #475569;
+}
+
+.dark {
+  --bg: #18181B;
+  --fg: #FAFAFA;
+  --accent: #60A5FA;
+  --card: #27272A;
+  --border: #3F3F46;
+  --muted: #A1A1AA;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-display: "Archivo", "Helvetica Neue", system-ui, sans-serif;
+  --font-body: "Space Grotesk", "Inter", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", monospace;
+  --color-background: var(--bg);
+  --color-foreground: var(--fg);
+  --color-accent: var(--accent);
+  --color-card: var(--card);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
+  background: var(--bg);
+  color: var(--fg);
+  font-family: "Space Grotesk", "Inter", system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  letter-spacing: -0.01em;
 }
 
-@keyframes chevron-hint {
-  0%,
-  100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.35;
-  }
+/* Sharp geometric — minimal style */
+.card-sharp {
+  border: 1px solid var(--border);
+  border-radius: 0px;
+  background: var(--card);
+  padding: 2rem;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .chevron-hint {
-    animation: chevron-hint 1s ease-in-out 2;
-  }
-
-  .cluster-orbit-spin {
-    animation: cluster-orbit-spin 24s linear infinite;
-  }
-
-  .cluster-core-pulse {
-    animation: cluster-core-pulse 3s ease-in-out infinite;
-  }
+/* Large bold display type */
+.h1-display {
+  font-family: "Archivo", "Helvetica Neue", system-ui, sans-serif;
+  font-size: clamp(3rem, 10vw, 7rem);
+  line-height: 1.05;
+  letter-spacing: -0.05em;
+  font-weight: 700;
 }
 
-.preserve-3d {
-  transform-style: preserve-3d;
+/* Minimal section heading */
+.h2-section {
+  font-family: "Archivo", sans-serif;
+  font-size: clamp(1.75rem, 4vw, 2.75rem);
+  line-height: 1.15;
+  letter-spacing: -0.03em;
+  font-weight: 600;
 }
 
-@keyframes cluster-orbit-spin {
-  from {
-    transform: rotateX(58deg) rotateZ(0deg);
+/* Body text — clean, spacious */
+.body-text {
+  font-size: 1.0625rem;
+  line-height: 1.7;
+  color: var(--fg);
+  max-width: 65ch;
+}
+
+/* Mono label */
+.mono-label {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.7rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--accent);
+  font-weight: 500;
+}
+
+/* Sharp button — minimal */
+.btn-sharp {
+  border: 1.5px solid var(--fg);
+  border-radius: 0px;
+  padding: 0.75rem 1.5rem;
+  font-family: "Archivo", sans-serif;
+  font-weight: 600;
+  font-size: 0.875rem;
+  letter-spacing: -0.02em;
+  background: transparent;
+  color: var(--fg);
+  transition: background 200ms ease, color 200ms ease;
+}
+.btn-sharp:hover {
+  background: var(--fg);
+  color: var(--bg);
+}
+
+/* Sharp tag pills */
+.tag-sharp {
+  border: 1px solid var(--border);
+  border-radius: 0px;
+  padding: 0.2rem 0.6rem;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.7rem;
+  color: var(--fg);
+  letter-spacing: 0.01em;
+  background: var(--card);
+}
+
+/* Sharp divider */
+.divider-sharp {
+  height: 1px;
+  background: var(--border);
+  border: none;
+}
+
+/* Focus ring — sharp, visible */
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation: none !important;
+    transition: none !important;
   }
-  to {
-    transform: rotateX(58deg) rotateZ(360deg);
-  }
-}
-
-@keyframes cluster-core-pulse {
-  0%,
-  100% {
-    box-shadow: 0 0 32px -4px rgba(34, 211, 238, 0.55);
-  }
-  50% {
-    box-shadow: 0 0 40px 0 rgba(34, 211, 238, 0.75);
-  }
-}
-
-.cluster-scene {
-  transform: rotateX(12deg) rotateY(-8deg);
-}
-
-.cluster-orbit {
-  transform: rotateX(58deg);
-}
-
-.cluster-pod-anchor {
-  transform: rotateZ(var(--orbit-deg)) translateY(-4.25rem)
-    rotateZ(calc(-1 * var(--orbit-deg)));
 }

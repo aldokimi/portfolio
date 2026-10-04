@@ -1,197 +1,144 @@
 "use client";
 
-import { MarkdownArticle } from "@/components/MarkdownArticle";
+import { useEffect, useRef, useState, useTransition } from "react";
+import { useActionState } from "react";
+import { useCreateBlockNote } from "@blocknote/react";
+import { BlockNoteView } from "@blocknote/shadcn";
+import "@blocknote/core/fonts/inter.css";
+import "@blocknote/shadcn/style.css";
 import { slugify } from "@/lib/post-utils";
 import type { Post, PostStatus } from "@/lib/types/post";
 import { noopAction } from "@/app/admin/actions";
-import { useActionState, useState } from "react";
 
-type ActionState = { error?: string; ok?: true } | null;
+type SaveState = { error?: string; ok?: true } | null;
+type DeleteState = { error?: string } | null;
 
 type PostEditorProps = {
   mode: "create" | "edit";
   post?: Post;
-  saveAction: (
-    prev: ActionState,
-    formData: FormData,
-  ) => Promise<ActionState>;
-  deleteAction?: (
-    prev: { error?: string } | null,
-    formData: FormData,
-  ) => Promise<{ error?: string } | null>;
+  saveAction: (prev: SaveState, formData: FormData) => Promise<SaveState>;
+  deleteAction?: (prev: DeleteState, formData: FormData) => Promise<DeleteState>;
 };
 
-export function PostEditor({
-  mode,
-  post,
-  saveAction,
-  deleteAction,
-}: PostEditorProps) {
+export function PostEditor({ mode, post, saveAction, deleteAction }: PostEditorProps) {
   const [title, setTitle] = useState(post?.title ?? "");
   const [slug, setSlug] = useState(post?.slug ?? "");
-  const [body, setBody] = useState(post?.body ?? "");
   const [slugTouched, setSlugTouched] = useState(mode === "edit");
+  const loadedInitialBody = useRef(false);
 
-  const [saveState, saveFormAction, savePending] = useActionState(
-    saveAction,
-    null,
-  );
+  const editor = useCreateBlockNote();
+
+  useEffect(() => {
+    if (loadedInitialBody.current || !post?.body) return;
+    loadedInitialBody.current = true;
+    const blocks = editor.tryParseMarkdownToBlocks(post.body);
+    editor.replaceBlocks(editor.document, blocks);
+  }, [editor, post?.body]);
+
+  const [saveState, saveFormAction, savePending] = useActionState(saveAction, null);
   const [deleteState, deleteFormAction, deletePending] = useActionState(
     deleteAction ?? noopAction,
     null,
   );
-
-  function handleTitleChange(value: string) {
-    setTitle(value);
-    if (!slugTouched && mode === "create") {
-      setSlug(slugify(value));
-    }
-  }
+  const [, startTransition] = useTransition();
 
   const status: PostStatus = post?.status ?? "draft";
   const error = saveState?.error ?? deleteState?.error ?? null;
   const pending = savePending || deletePending;
 
+  function handleTitleChange(value: string) {
+    setTitle(value);
+    if (!slugTouched && mode === "create") setSlug(slugify(value));
+  }
+
+  function handleSave(intent: "draft" | "publish" | "unpublish") {
+    const markdown = editor.blocksToMarkdownLossy(editor.document);
+    const formData = new FormData();
+    if (mode === "edit" && post) formData.set("postId", String(post.id));
+    formData.set("title", title);
+    formData.set("slug", slug);
+    formData.set("body", markdown);
+    formData.set("intent", intent);
+    startTransition(() => {
+      saveFormAction(formData);
+    });
+  }
+
   return (
     <div className="space-y-6">
       <header className="space-y-2">
-        <p className="font-mono text-xs uppercase tracking-[0.25em] text-cyan-500/90">
-          /admin/posts/{mode === "create" ? "new" : `${post?.id}/edit`}
-        </p>
-        <h1 className="font-mono text-2xl text-slate-50">
-          {mode === "create" ? "New post" : "Edit post"}
-        </h1>
+        <p className="mono-label">/admin/posts/{mode === "create" ? "new" : `${post?.id}/edit`}</p>
+        <h1 className="h2-section text-[var(--fg)]">{mode === "create" ? "New post" : "Edit post"}</h1>
       </header>
 
       {error ? (
-        <p className="rounded-lg border border-red-500/40 bg-red-500/10 px-4 py-2 font-mono text-sm text-red-300">
+        <p className="rounded-[var(--radius-tag)] border border-red-500/40 bg-red-500/10 px-4 py-2 text-sm text-red-400">
           {error}
         </p>
       ) : null}
-
       {saveState?.ok ? (
-        <p className="rounded-lg border border-emerald-500/40 bg-emerald-500/10 px-4 py-2 font-mono text-sm text-emerald-300">
+        <p className="rounded-[var(--radius-tag)] border border-[var(--accent)]/40 bg-[var(--accent)]/10 px-4 py-2 text-sm text-[var(--accent)]">
           Saved.
         </p>
       ) : null}
 
-      <form action={saveFormAction} className="space-y-6">
-        {mode === "edit" && post ? (
-          <input type="hidden" name="postId" value={post.id} />
+      <div className="grid gap-4 sm:grid-cols-2">
+        <label className="block space-y-1">
+          <span className="font-mono text-[11px] uppercase tracking-widest text-[var(--muted)]">Title</span>
+          <input
+            value={title}
+            onChange={(e) => handleTitleChange(e.target.value)}
+            required
+            className="w-full rounded-[var(--radius-card)] border border-[var(--border)] bg-[var(--card)] px-3 py-2 text-sm text-[var(--card-fg)] outline-none focus:border-[var(--accent)]"
+          />
+        </label>
+        <label className="block space-y-1">
+          <span className="font-mono text-[11px] uppercase tracking-widest text-[var(--muted)]">Slug</span>
+          <input
+            value={slug}
+            onChange={(e) => {
+              setSlugTouched(true);
+              setSlug(e.target.value);
+            }}
+            required
+            className="w-full rounded-[var(--radius-card)] border border-[var(--border)] bg-[var(--card)] px-3 py-2 text-sm text-[var(--card-fg)] outline-none focus:border-[var(--accent)]"
+          />
+        </label>
+      </div>
+
+      <div>
+        <span className="font-mono text-[11px] uppercase tracking-widest text-[var(--muted)]">Body</span>
+        <div className="mt-1 min-h-[28rem] overflow-hidden rounded-[var(--radius-card)] border border-[var(--border)]">
+          <BlockNoteView editor={editor} theme="dark" />
+        </div>
+      </div>
+
+      <div className="flex flex-wrap gap-3">
+        <button type="button" disabled={pending} onClick={() => handleSave("draft")} className="btn-sharp">
+          Save draft
+        </button>
+        <button type="button" disabled={pending} onClick={() => handleSave("publish")} className="btn-sharp">
+          Publish
+        </button>
+        {status === "published" ? (
+          <button type="button" disabled={pending} onClick={() => handleSave("unpublish")} className="btn-sharp">
+            Unpublish
+          </button>
         ) : null}
-
-        <div className="grid gap-6 lg:grid-cols-2">
-          <div className="space-y-4">
-            <label className="block space-y-1">
-              <span className="font-mono text-[11px] uppercase tracking-widest text-slate-500">
-                Title
-              </span>
-              <input
-                name="title"
-                value={title}
-                onChange={(e) => handleTitleChange(e.target.value)}
-                required
-                className="w-full rounded-lg border border-slate-800 bg-slate-950 px-3 py-2 font-mono text-sm text-slate-100 outline-none focus:border-cyan-500/50"
-              />
-            </label>
-
-            <label className="block space-y-1">
-              <span className="font-mono text-[11px] uppercase tracking-widest text-slate-500">
-                Slug
-              </span>
-              <input
-                name="slug"
-                value={slug}
-                onChange={(e) => {
-                  setSlugTouched(true);
-                  setSlug(e.target.value);
-                }}
-                required
-                className="w-full rounded-lg border border-slate-800 bg-slate-950 px-3 py-2 font-mono text-sm text-slate-100 outline-none focus:border-cyan-500/50"
-              />
-            </label>
-
-            <label className="block space-y-1">
-              <span className="font-mono text-[11px] uppercase tracking-widest text-slate-500">
-                Body (markdown)
-              </span>
-              <textarea
-                name="body"
-                value={body}
-                onChange={(e) => setBody(e.target.value)}
-                rows={18}
-                className="w-full resize-y rounded-lg border border-slate-800 bg-slate-950 px-3 py-2 font-mono text-sm leading-relaxed text-slate-100 outline-none focus:border-cyan-500/50"
-              />
-            </label>
-          </div>
-
-          <div className="space-y-2">
-            <p className="font-mono text-[11px] uppercase tracking-widest text-slate-500">
-              Preview
-            </p>
-            <div className="min-h-[24rem] rounded-lg border border-slate-800 bg-slate-900/35 p-4">
-              {body.trim() ? (
-                <MarkdownArticle source={body} />
-              ) : (
-                <p className="font-mono text-sm text-slate-600">Nothing yet.</p>
-              )}
-            </div>
-          </div>
-        </div>
-
-        <div className="flex flex-wrap gap-3">
-          <button
-            type="submit"
-            name="intent"
-            value="draft"
-            disabled={pending}
-            className="rounded-lg border border-slate-700 px-4 py-2 font-mono text-xs uppercase tracking-widest text-slate-300 hover:border-slate-500 disabled:opacity-50"
-          >
-            Save draft
-          </button>
-          <button
-            type="submit"
-            name="intent"
-            value="publish"
-            disabled={pending}
-            className="rounded-lg border border-emerald-500/40 bg-emerald-500/10 px-4 py-2 font-mono text-xs uppercase tracking-widest text-emerald-300 hover:bg-emerald-500/20 disabled:opacity-50"
-          >
-            Publish
-          </button>
-          {status === "published" ? (
-            <button
-              type="submit"
-              name="intent"
-              value="unpublish"
-              disabled={pending}
-              className="rounded-lg border border-amber-500/40 bg-amber-500/10 px-4 py-2 font-mono text-xs uppercase tracking-widest text-amber-300 hover:bg-amber-500/20 disabled:opacity-50"
-            >
-              Unpublish
-            </button>
-          ) : null}
-        </div>
-      </form>
+      </div>
 
       {mode === "edit" && post && deleteAction ? (
         <form
           action={deleteFormAction}
-          className="border-t border-slate-800/80 pt-6"
+          className="border-t border-[var(--border)] pt-6"
           onSubmit={(e) => {
-            if (
-              !window.confirm(
-                `Delete "${post.title}"? This cannot be undone.`,
-              )
-            ) {
+            if (!window.confirm(`Delete "${post.title}"? This cannot be undone.`)) {
               e.preventDefault();
             }
           }}
         >
           <input type="hidden" name="postId" value={post.id} />
-          <button
-            type="submit"
-            disabled={pending}
-            className="rounded-lg border border-red-500/40 px-4 py-2 font-mono text-xs uppercase tracking-widest text-red-300 hover:bg-red-500/10 disabled:opacity-50"
-          >
+          <button type="submit" disabled={pending} className="btn-sharp">
             Delete
           </button>
         </form>

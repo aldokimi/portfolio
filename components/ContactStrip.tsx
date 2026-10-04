@@ -5,7 +5,7 @@ function LinkItem({ link }: { link: ProfileLink }) {
   return (
     <a
       href={link.href}
-      className="rounded-md border border-slate-800 bg-slate-900/50 px-3 py-1.5 font-mono text-xs text-cyan-300/90 transition hover:border-cyan-500/40 hover:text-cyan-200"
+      className="btn-sharp text-xs"
       {...(external ? { rel: "noreferrer", target: "_blank" } : {})}
     >
       {link.label}
@@ -18,17 +18,13 @@ export function ContactStrip({
 }: {
   variant?: "compact" | "full";
 }) {
-  const links =
-    variant === "compact"
-      ? profile.links.filter((l) => l.label !== "Phone")
-      : profile.links;
+  const links = profile.links;
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-4">
       {variant === "full" ? (
-        <p className="text-sm text-slate-400">
-          Open to interesting platform, cloud-native, and security engineering
-          work.
+        <p className="text-base text-[var(--muted)] leading-relaxed">
+          Open to interesting platform, cloud-native, and security engineering work.
         </p>
       ) : null}
       <div className="flex flex-wrap gap-2">

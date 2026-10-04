@@ -2,9 +2,17 @@
 
 import { createPost, deletePost, updatePost } from "@/lib/posts";
 import type { PostStatus } from "@/lib/types/post";
+import {
+  checkPassword,
+  createSessionToken,
+  getAdminPassword,
+  SESSION_COOKIE,
+  SESSION_MAX_AGE_SECONDS,
+} from "@/lib/auth";
 import { isRedirectError } from "next/dist/client/components/redirect-error";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { cookies } from "next/headers";
 
 function intentToStatus(intent: string): PostStatus {
   return intent === "publish" ? "published" : "draft";
@@ -19,7 +27,6 @@ function readPostFields(formData: FormData) {
   };
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars -- stable noop for useActionState when delete is absent
 export async function noopAction(): Promise<null> {
   return null;
 }
@@ -35,6 +42,42 @@ function dbErrorMessage(err: unknown): string {
   return message || "Something went wrong while saving.";
 }
 
+export async function loginAction(
+  _prev: { error?: string } | null,
+  formData: FormData,
+): Promise<{ error?: string } | null> {
+  const password = String(formData.get("password") ?? "");
+
+  let expected: string;
+  try {
+    expected = await getAdminPassword();
+  } catch (err) {
+    return { error: err instanceof Error ? err.message : "Admin password is not configured." };
+  }
+
+  if (!checkPassword(password, expected)) {
+    return { error: "Incorrect password." };
+  }
+
+  const token = await createSessionToken(expected);
+  const cookieStore = await cookies();
+  cookieStore.set(SESSION_COOKIE, token, {
+    httpOnly: true,
+    secure: true,
+    sameSite: "lax",
+    path: "/admin",
+    maxAge: SESSION_MAX_AGE_SECONDS,
+  });
+
+  redirect("/admin/");
+}
+
+export async function logoutAction(): Promise<void> {
+  const cookieStore = await cookies();
+  cookieStore.delete({ name: SESSION_COOKIE, path: "/admin" });
+  redirect("/admin/login/");
+}
+
 export async function createPostAction(
   _prev: { error?: string; ok?: true } | null,
   formData: FormData,
@@ -46,7 +89,7 @@ export async function createPostAction(
     const result = await createPost({ title, slug, body }, status);
     if (!result.ok) return { error: result.error };
 
-    revalidatePath("/logs");
+    revalidatePath("/blog");
     revalidatePath("/admin");
     redirect(`/admin/posts/${result.post.id}/edit/`);
   } catch (err) {
@@ -72,8 +115,8 @@ export async function updatePostAction(
     const result = await updatePost(id, { title, slug, body }, status);
     if (!result.ok) return { error: result.error };
 
-    revalidatePath("/logs");
-    revalidatePath(`/logs/${result.post.slug}/`);
+    revalidatePath("/blog");
+    revalidatePath(`/blog/${result.post.slug}/`);
     revalidatePath("/admin");
     revalidatePath(`/admin/posts/${id}/edit/`);
     return { ok: true };
@@ -94,7 +137,7 @@ export async function deletePostAction(
     const result = await deletePost(id);
     if (!result.ok) return { error: result.error };
 
-    revalidatePath("/logs");
+    revalidatePath("/blog");
     revalidatePath("/admin");
     redirect("/admin/");
   } catch (err) {

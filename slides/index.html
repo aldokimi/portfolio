@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Security Portfolio — Pitch Deck</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@300;400;600;700;800&family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <style>
+    :root {
+      --bg: #030712; --fg: #f0f4f8; --accent: #00e676; --accent2: #00e5ff; --card: #0d1a2b; --border: #1e2a3a; --muted: #8aa0b0;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Space Grotesk', 'Inter', system-ui, sans-serif; background: var(--bg); color: var(--fg); line-height: 1.6; overflow-x: hidden; }
+    h1, h2, h3 { font-family: 'Archivo', 'Helvetica Neue', sans-serif; letter-spacing: -0.03em; line-height: 1.05; }
+    .mono { font-family: 'JetBrains Mono', monospace; letter-spacing: 0.05em; }
+    .slide { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 6rem 2rem; border-bottom: 1px solid var(--border); position: relative; overflow: hidden; }
+    .slide:last-of-type { border-bottom: none; }
+    .container { max-width: 1100px; width: 100%; }
+    .label { display: inline-block; border: 1.5px solid var(--accent); border-radius: 0px; padding: 0.25rem 0.75rem; font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--accent); font-weight: 500; margin-bottom: 1.5rem; }
+    .hero-title { font-size: clamp(4rem, 14vw, 9rem); font-weight: 800; letter-spacing: -0.06em; color: var(--fg); }
+    .hero-sub { font-size: 1.25rem; color: var(--muted); max-width: 600px; margin-top: 1.5rem; line-height: 1.6; }
+    .sharp-card { border: 2px solid var(--border); background: var(--card); padding: 2rem; border-radius: 2px; }
+    .sharp-btn { border: 2px solid var(--accent); padding: 0.75rem 1.75rem; font-family: 'Archivo', sans-serif; font-weight: 700; letter-spacing: -0.02em; color: var(--fg); background: transparent; transition: background 0.2s, color 0.2s; text-decoration: none; display: inline-block; }
+    .sharp-btn:hover { background: var(--accent); color: #030712; }
+    .geometric-grid { position: absolute; inset: 0; pointer-events: none; opacity: 0.08; background-image: linear-gradient(var(--border) 1px, transparent 1px), linear-gradient(90deg, var(--border) 1px, transparent 1px); background-size: 60px 60px; z-index: 0; }
+    .content { position: relative; z-index: 1; }
+    nav { position: fixed; top: 0; left: 0; right: 0; z-index: 50; padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); background: rgba(3,7,18,0.8); backdrop-filter: blur(8px); }
+    nav a { color: var(--fg); text-decoration: none; font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase; opacity: 0.7; transition: opacity 0.2s; }
+    nav a:hover { opacity: 1; color: var(--accent); }
+    .chart-wrap { max-width: 600px; margin: 2rem auto; }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="#hero">~/portfolio</a>
+  <a href="#skills">Inventory</a>
+  <a href="#contact">Contact</a>
+</nav>
+
+<!-- SLIDE 1: HERO -->
+<section id="hero" class="slide">
+  <div class="geometric-grid"></div>
+  <div class="container content text-center">
+    <div class="label">Security Engineer</div>
+    <h1 class="hero-title">Mohammed<br>Al-Dokimi</h1>
+    <p class="hero-sub">Deep expertise in infrastructure, cloud-native systems, and scalable automation. Building secure platforms from first principles.</p>
+    <a href="#skills" class="sharp-btn">View Skills →</a>
+  </div>
+</section>
+
+<!-- SLIDE 2: SKILLS OVERVIEW (with Chart.js) -->
+<section id="skills" class="slide">
+  <div class="geometric-grid"></div>
+  <div class="container content">
+    <div class="label">Inventory</div>
+    <h2 style="font-size: clamp(2.5rem, 6vw, 4.5rem); font-weight: 700; letter-spacing: -0.04em; line-height: 1.05; margin-bottom: 3rem;">Technical Inventory</h2>
+    <div class="sharp-card">
+      <h3 style="font-family: 'Archivo'; font-size: 1.5rem; font-weight: 600; letter-spacing: -0.02em; margin-bottom: 1.5rem;">Skill Distribution</h3>
+      <div class="chart-wrap">
+        <canvas id="skillsChart"></canvas>
+      </div>
+      <div style="display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 2rem;">
+        <span class="label" style="margin: 0; font-size: 0.65rem;">INFRASTRUCTURE</span>
+        <span class="label" style="margin: 0; font-size: 0.65rem; background: transparent; border-color: var(--accent2); color: var(--accent2);">SECURITY</span>
+        <span class="label" style="margin: 0; font-size: 0.65rem;">GOLANG</span>
+        <span class="label" style="margin: 0; font-size: 0.65rem;">PYTHON</span>
+        <span class="label" style="margin: 0; font-size: 0.65rem;">CLOUD NATIVE</span>
+        <span class="label" style="margin: 0; font-size: 0.65rem;">AUTOMATION</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 3: EXPERIENCE -->
+<section id="experience" class="slide">
+  <div class="geometric-grid"></div>
+  <div class="container content">
+    <div class="label">Experience</div>
+    <h2 style="font-size: clamp(2.5rem, 6vw, 4.5rem); font-weight: 700; letter-spacing: -0.04em; line-height: 1.05; margin-bottom: 3rem;">Experience Nodes</h2>
+    <div style="display: grid; gap: 2rem;">
+      <article class="sharp-card relative overflow-hidden">
+        <span style="position: absolute; top: 0; left: 0; width: 12px; height: 12px; border-top: 2px solid var(--accent); border-left: 2px solid var(--accent); opacity: 0.4;"></span>
+        <h3 style="font-family: 'Archivo'; font-size: 1.5rem; font-weight: 600; letter-spacing: -0.02em;">Platform Engineering Lead</h3>
+        <p style="font-family: 'JetBrains Mono'; font-size: 0.75rem; letter-spacing: 0.1em; color: var(--accent); margin-top: 0.25rem;">2022 — Present</p>
+        <p style="margin-top: 1rem; color: var(--muted); font-size: 1rem; line-height: 1.6;">Architecting multi-region infrastructure, cloud-native delivery pipelines, and security-hardened automation platforms.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 4: CERTIFICATIONS -->
+<section id="certifications" class="slide">
+  <div class="geometric-grid"></div>
+  <div class="container content">
+    <div class="label">Trust</div>
+    <h2 style="font-size: clamp(2.5rem, 6vw, 4.5rem); font-weight: 700; letter-spacing: -0.04em; line-height: 1.05; margin-bottom: 3rem;">Verified Credentials</h2>
+    <div class="sharp-card">
+      <ul style="list-style: none; padding: 0; margin: 0;">
+        <li style="display: flex; justify-content: space-between; align-items: center; padding: 1rem 0; border-bottom: 1px solid var(--border);">
+          <div>
+            <p style="font-family: 'Archivo'; font-weight: 600; font-size: 1.1rem;">Security+</p>
+            <p style="font-family: 'JetBrains Mono'; font-size: 0.7rem; color: var(--muted); letter-spacing: 0.1em;">VALID UNTIL 2026</p>
+          </div>
+          <span style="width: 8px; height: 8px; background: var(--accent); border-radius: 0; transform: rotate(45deg); display: inline-block;"></span>
+        </li>
+        <li style="display: flex; justify-content: space-between; align-items: center; padding: 1rem 0;">
+          <div>
+            <p style="font-family: 'Archivo'; font-weight: 600; font-size: 1.1rem;">Cloud Architecture — Advanced</p>
+            <p style="font-family: 'JetBrains Mono'; font-size: 0.7rem; color: var(--muted); letter-spacing: 0.1em;">VALID UNTIL 2027</p>
+          </div>
+          <span style="width: 8px; height: 8px; background: var(--accent); border-radius: 0; transform: rotate(45deg); display: inline-block;"></span>
+        </li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 5: CONTACT -->
+<section id="contact" class="slide">
+  <div class="geometric-grid"></div>
+  <div class="container content text-center">
+    <div class="label">Contact</div>
+    <h2 style="font-size: clamp(2.5rem, 6vw, 5rem); font-weight: 700; letter-spacing: -0.04em; line-height: 1.05; margin-bottom: 1.5rem;">Let's Build</h2>
+    <p class="body-text mx-auto" style="margin-bottom: 3rem;">Open to consulting, coaching, and platform engineering work. Remote-friendly from Budapest, Hungary.</p>
+    <div style="display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center;">
+      <a href="mailto:mo.aldokimi@gmail.com" class="sharp-btn">Email</a>
+      <a href="https://github.com/aldokimi" class="sharp-btn">GitHub</a>
+      <a href="https://linkedin.com/in/mohammed-al-dokimi-98ba411a5" class="sharp-btn">LinkedIn</a>
+    </div>
+  </div>
+</section>
+
+<script>
+  // Chart.js skills visualization
+  const ctx = document.getElementById('skillsChart').getContext('2d');
+  new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: ['Infrastructure', 'Security', 'Cloud Native', 'Automation'],
+      datasets: [{
+        label: 'Expertise',
+        data: [92, 88, 85, 80],
+        backgroundColor: ['#00e676', '#00e5ff', '#00e676', '#00e5ff'],
+        borderRadius: 0,
+        borderSkipped: false,
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        y: { beginAtZero: true, max: 100, grid: { color: '#1e2a3a' }, ticks: { color: '#8aa0b0', font: { family: 'JetBrains Mono', size: 10 } } },
+        x: { grid: { display: false }, ticks: { color: '#f0f4f8', font: { family: 'Archivo', size: 12, weight: '600' } } }
+      }
+    }
+  });
+</script>
+
+</body>
+</html>

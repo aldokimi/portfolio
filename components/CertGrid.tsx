@@ -6,21 +6,19 @@ export function CertGrid() {
       {certifications.map((cert) => (
         <li
           key={cert.name}
-          className={`rounded-lg border px-3 py-2 ${
-            cert.highlight
-              ? "border-cyan-500/40 bg-cyan-500/10"
-              : "border-slate-800 bg-slate-900/35"
+          className={`card-sharp px-4 py-3 relative overflow-hidden group ${
+            cert.highlight ? "border-[var(--accent)]" : ""
           }`}
         >
-          <p
-            className={`font-mono text-xs ${
-              cert.highlight ? "text-cyan-200" : "text-slate-200"
-            }`}
-          >
+          {/* Shield badge indicator for highlighted */}
+          {cert.highlight && (
+            <span className="absolute top-2 right-2 w-2 h-2 bg-[var(--accent)] rotate-45" />
+          )}
+          <p className="font-mono text-sm text-[var(--card-fg)] font-medium">
             {cert.name}
           </p>
-          <p className="mt-1 font-mono text-[10px] uppercase tracking-widest text-slate-500">
-            valid until {cert.validUntil}
+          <p className="mt-1 font-mono text-[10px] tracking-[0.1em] text-[var(--card-muted)]">
+            VALID UNTIL {cert.validUntil}
           </p>
         </li>
       ))}

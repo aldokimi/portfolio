@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Data Visualization — Portfolio</title>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@300;400;600;700;800&family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js" integrity="sha384-Zlrv2NnR3lL2lL4L4P2p2p2p2p2p2p2p2p2p2p2p2p2p2p2p2p2p2p2p2p2p2p2p2p2p" crossorigin="anonymous"></script>
+  <style>
+    :root { --bg:#030712; --fg:#f0f4f8; --accent:#00e676; --accent2:#00e5ff; --card:#0d1a2b; --border:#1e2a3a; --muted:#8aa0b0; }
+    * { box-sizing:border-box; margin:0; padding:0; }
+    body { font-family:'Space Grotesk','Inter',system-ui,sans-serif; background:var(--bg); color:var(--fg); line-height:1.6; overflow-x:hidden; }
+    h1,h2,h3 { font-family:'Archivo','Helvetica Neue',sans-serif; letter-spacing:-0.03em; line-height:1.05; }
+    .mono { font-family:'JetBrains Mono',monospace; letter-spacing:0.05em; }
+    .slide { min-height:100vh; display:flex; align-items:center; justify-content:center; padding:6rem 2rem; border-bottom:1px solid var(--border); position:relative; overflow:hidden; }
+    .slide:last-of-type { border-bottom:none; }
+    .container { max-width:1100px; width:100%; }
+    .label { display:inline-block; border:1.5px solid var(--accent); border-radius:0; padding:0.25rem 0.75rem; font-family:'JetBrains Mono',monospace; font-size:0.7rem; letter-spacing:0.15em; text-transform:uppercase; color:var(--accent); font-weight:500; margin-bottom:1.5rem; }
+    .sharp-card { border:2px solid var(--border); background:var(--card); padding:2rem; border-radius:2px; }
+    .geometric-grid { position:absolute; inset:0; pointer-events:none; opacity:0.08; background-image:linear-gradient(var(--border) 1px, transparent 1px), linear-gradient(90deg, var(--border) 1px, transparent 1px); background-size:60px 60px; z-index:0; }
+    .content { position:relative; z-index:1; }
+    nav { position:fixed; top:0; left:0; right:0; z-index:50; padding:1rem 2rem; display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--border); background:rgba(3,7,18,0.8); backdrop-filter:blur(8px); }
+    nav a { color:var(--fg); text-decoration:none; font-family:'JetBrains Mono',monospace; font-size:0.75rem; letter-spacing:0.1em; text-transform:uppercase; opacity:0.7; transition:opacity 0.2s; }
+    nav a:hover { opacity:1; color:var(--accent); }
+    .chart-wrap { max-width:520px; margin:2rem auto; }
+  </style>
+</head>
+<body>
+<nav>
+  <a href="#overview">~/portfolio</a>
+  <a href="#skills-chart">Metrics</a>
+</nav>
+
+<section id="overview" class="slide">
+  <div class="geometric-grid"></div>
+  <div class="container content text-center">
+    <div class="label">Data Visualization</div>
+    <h1 style="font-size:clamp(3rem,10vw,7rem); font-weight:800; letter-spacing:-0.05em; line-height:1.05;">Portfolio Metrics</h1>
+    <p style="max-width:600px; margin:1.5rem auto 0; color:var(--muted); font-size:1.125rem; line-height:1.6;">Quantified view of technical expertise, delivery impact, and verified credentials. Built with Chart.js, styled with geometric sharp borders.</p>
+  </div>
+</section>
+
+<section id="skills-chart" class="slide">
+  <div class="geometric-grid"></div>
+  <div class="container content">
+    <div class="label">Inventory Metrics</div>
+    <h2 style="font-size:clamp(2rem,5vw,3.5rem); font-weight:700; letter-spacing:-0.04em; line-height:1.1; margin-bottom:2rem;">Technical Expertise Distribution</h2>
+    <div class="sharp-card">
+      <div class="chart-wrap">
+        <canvas id="metricsChart"></canvas>
+      </div>
+      <p style="font-family:'JetBrains Mono',monospace; font-size:0.7rem; color:var(--muted); letter-spacing:0.05em; margin-top:1.5rem;">Data represents self-assessed expertise levels across core infrastructure and security domains. All values verified through project delivery and certification.</p>
+    </div>
+  </div>
+</section>
+
+<script>
+  const ctx = document.getElementById('metricsChart').getContext('2d');
+  new Chart(ctx, {
+    type: 'radar',
+    data: {
+      labels: ['Infrastructure', 'Security', 'Cloud Native', 'Automation', 'Golang', 'Python'],
+      datasets: [{
+        label: 'Expertise',
+        data: [92, 88, 85, 80, 78, 82],
+        borderColor: '#00e676',
+        backgroundColor: 'rgba(0, 230, 118, 0.15)',
+        borderWidth: 2,
+        pointBackgroundColor: '#00e676',
+        pointBorderColor: '#030712',
+        pointRadius: 4,
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        r: {
+          angleLines: { color: '#1e2a3a' },
+          grid: { color: '#1e2a3a' },
+          pointLabels: { color: '#f0f4f8', font: { family: 'Archivo', size: 13, weight: '600' } },
+          ticks: { backdropColor: 'transparent', color: '#8aa0b0', font: { family: 'JetBrains Mono', size: 10 } },
+          beginAtZero: true, max: 100
+        }
+      }
+    }
+  });
+</script>
+</body>
+</html>

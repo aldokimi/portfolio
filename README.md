@@ -50,8 +50,8 @@ yarn deploy
 
 Requires `wrangler login` and D1 `database_id` set in `wrangler.jsonc`. On **Cloudflare Pages**, build with `yarn cf:build` (see [deployment-and-ci.md](docs/deployment-and-ci.md)), not `yarn build` alone.
 
-## Logs
+## Blog
 
-Public feed at **`/logs/`**. Posts are markdown articles at **`/logs/<slug>/`**. Manage via **`/admin`** (Access-protected in production).
+Public feed at **`/blog/`**. Posts are markdown articles at **`/blog/<slug>/`**. Write them with a Notion-style block editor at **`/admin`**, protected by an in-app password login (`ADMIN_PASSWORD`).
 
 Details: [`docs/admin-blog.md`](docs/admin-blog.md).

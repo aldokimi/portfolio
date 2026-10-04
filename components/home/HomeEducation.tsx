@@ -4,7 +4,7 @@ import { educationRecords } from "@/lib/education-data";
 
 export function HomeEducation() {
   return (
-    <div id="education" className="scroll-mt-28 space-y-6">
+    <div className="space-y-6">
       <SectionHeading label="Education" title="Academic records" />
       <EducationRecords records={educationRecords} />
     </div>

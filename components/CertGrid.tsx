@@ -14,10 +14,10 @@ export function CertGrid() {
           {cert.highlight && (
             <span className="absolute top-2 right-2 w-2 h-2 bg-[var(--accent)] rotate-45" />
           )}
-          <p className="font-mono text-sm text-[var(--fg)] font-medium">
+          <p className="font-mono text-sm text-[var(--card-fg)] font-medium">
             {cert.name}
           </p>
-          <p className="mt-1 font-mono text-[10px] tracking-[0.1em] text-[var(--muted)]">
+          <p className="mt-1 font-mono text-[10px] tracking-[0.1em] text-[var(--card-muted)]">
             VALID UNTIL {cert.validUntil}
           </p>
         </li>

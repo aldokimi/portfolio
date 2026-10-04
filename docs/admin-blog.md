@@ -1,6 +1,6 @@
 # Admin blog (D1)
 
-The **Logs** section (`/logs/`) reads **published** posts from **Cloudflare D1** at request time. Write and manage posts at **`/admin`** (protected by **Cloudflare Access**).
+The **Blog** section (`/blog/`) reads **published** posts from **Cloudflare D1** at request time. Write and manage posts at **`/admin`**, protected by an **in-app password login** (not Cloudflare Access).
 
 ---
 
@@ -38,17 +38,23 @@ You should see `posts` in the result. No redeploy needed after migrate; retry `/
 
 For future deploys from your machine: `yarn deploy:prod` (migrates, then builds and deploys).
 
-### 3. Cloudflare Access
+### 3. Admin password
 
-Zero Trust → **Access** → **Applications** → add self-hosted app:
+Auth is a single shared password — no username, no external identity provider. On login it's checked against the `ADMIN_PASSWORD` secret, and a signed, httpOnly session cookie (`admin_session`, scoped to `/admin`, 7-day expiry) is set. The signature is an HMAC over the expiry timestamp, keyed by `ADMIN_PASSWORD` itself — see [`lib/auth.ts`](../lib/auth.ts).
 
-- **Domain:** your production hostname (or `*.workers.dev` subdomain)
-- **Path:** `/admin` — enable **Include subpaths** (covers `/admin/posts/new/`, edit pages, and form POSTs for Server Actions)
-- **Policy:** allow your email only
+**Production:**
 
-No in-app login. Access handles auth at the edge.
+```bash
+npx wrangler secret put ADMIN_PASSWORD
+```
 
-If saves fail after login with no error, widen the Access application path to `/admin*` or add a second policy for `/_next/*` only if your deployment routes actions outside `/admin` (unusual for this app).
+**Local dev:** add to `.dev.vars` (gitignored):
+
+```
+ADMIN_PASSWORD=choose-a-local-password
+```
+
+If `/admin` shows "Admin password is not configured," the secret/var is missing in that environment.
 
 ### 4. Worker binding types (`worker-configuration.d.ts`)
 
@@ -59,6 +65,8 @@ yarn cf-typegen
 ```
 
 Uses **`--include-runtime=false`** so file stays small and safe to commit. Full runtime dump (huge): `yarn wrangler types --config wrangler.jsonc --env-interface CloudflareEnv`.
+
+`ADMIN_PASSWORD` is a **secret**, not a `wrangler.jsonc` var, so it's intentionally absent from the generated `CloudflareEnv` type — [`lib/auth.ts`](../lib/auth.ts) reads it via a narrow cast instead of hand-editing the generated file.
 
 CI: `yarn cf-typegen:check` fails if committed types drift vs current `wrangler.jsonc`.
 
@@ -87,8 +95,8 @@ yarn d1:migrate:local
 yarn dev
 ```
 
-- Public logs: http://localhost:3000/logs/
-- Admin: http://localhost:3000/admin/ (no Access locally — protect in production only)
+- Public blog: http://localhost:3000/blog/
+- Admin: http://localhost:3000/admin/ → redirects to http://localhost:3000/admin/login/ until you log in with `ADMIN_PASSWORD` from `.dev.vars`.
 
 Use `yarn preview` to test in the Workers runtime locally.
 
@@ -98,16 +106,20 @@ Use `yarn preview` to test in the Workers runtime locally.
 
 | Route | Purpose |
 |-------|---------|
+| `/admin/login` | Password login |
 | `/admin` | List all posts (draft + published) |
 | `/admin/posts/new` | Create post |
 | `/admin/posts/[id]/edit` | Edit, publish, unpublish, delete |
 
-- **Save draft** — hidden from `/logs`
+The editor (`components/PostEditor.tsx`) is a **Notion-style block editor** ([BlockNote](https://www.blocknote.js.org/)), not a plain markdown textarea. It edits rich blocks in the browser; on save, content is converted to markdown (`editor.blocksToMarkdownLossy()`) before hitting the server action, and converted back to blocks on load (`editor.tryParseMarkdownToBlocks()`) — so the D1 `posts.body` column stays plain markdown text, and the public `/blog` pages keep rendering with `react-markdown` unchanged.
+
+- **Save draft** — hidden from `/blog`
 - **Publish** — live immediately (no redeploy)
 - **Unpublish** — back to draft
 - **Delete** — hard delete
+- **Log out** — in the admin nav, clears the session cookie
 
-Posts use **markdown** body and slug URLs: `/logs/<slug>/`.
+Posts use **markdown** body and slug URLs: `/blog/<slug>/`.
 
 ---
 
@@ -117,7 +129,7 @@ Posts use **markdown** body and slug URLs: `/logs/<slug>/`.
 yarn deploy
 ```
 
-Builds via OpenNext and deploys Worker + assets with D1 binding.
+Builds via OpenNext and deploys Worker + assets with D1 binding. Don't forget `wrangler secret put ADMIN_PASSWORD` once per environment (see above) — it isn't part of the build.
 
 For CI, see [deployment-and-ci.md](deployment-and-ci.md).
 
@@ -125,7 +137,10 @@ For CI, see [deployment-and-ci.md](deployment-and-ci.md).
 
 ## Code pointers
 
+- Auth (password check, session token sign/verify): [`lib/auth.ts`](../lib/auth.ts)
 - D1 queries: [`lib/posts.ts`](../lib/posts.ts)
 - Slug / excerpt helpers: [`lib/post-utils.ts`](../lib/post-utils.ts)
-- Server Actions: [`app/admin/actions.ts`](../app/admin/actions.ts)
-- Public feed: [`components/LogFeed.tsx`](../components/LogFeed.tsx)
+- Server Actions (login, logout, create/update/delete post): [`app/admin/actions.ts`](../app/admin/actions.ts)
+- Auth guard + admin nav chrome: [`app/admin/(protected)/layout.tsx`](../app/admin/(protected)/layout.tsx)
+- Notion-style editor: [`components/PostEditor.tsx`](../components/PostEditor.tsx)
+- Public feed: [`components/BlogFeed.tsx`](../components/BlogFeed.tsx)

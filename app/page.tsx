@@ -1,34 +1,55 @@
 import { HomeHero } from "@/components/home/HomeHero";
+import { DashboardPanels } from "@/components/home/DashboardPanels";
 import { HomeExperience } from "@/components/home/HomeExperience";
 import { HomeSkills } from "@/components/home/HomeSkills";
 import { HomeCerts } from "@/components/home/HomeCerts";
 import { HomeEducation } from "@/components/home/HomeEducation";
 import { HomeProjects } from "@/components/home/HomeProjects";
-import { ScrollAnimations } from "@/components/ScrollAnimations";
+import { SpringReveal } from "@/components/SpringReveal";
+import { SectionNavDots } from "@/components/SectionNavDots";
+import { FooterContent } from "@/components/SiteFooter";
 
 export default function Home() {
   return (
-    <main className="mx-auto w-full max-w-4xl flex-1 px-4 py-16 sm:py-24">
-      <HomeHero />
-      <ScrollAnimations>
-        <div className="mt-20 space-y-24">
-          <div data-scroll-anim>
+    <>
+      <SectionNavDots />
+      <div className="mx-auto flex h-[calc(100dvh-5rem)] w-full max-w-7xl">
+        {/* Pinned intro — desktop only. Stays in place while the panel on the right scrolls. */}
+        <aside className="relative hidden h-full w-[38%] shrink-0 lg:block">
+          <HomeHero showNav />
+        </aside>
+
+        <main
+          data-lenis-prevent
+          className="snap-container relative h-full flex-1 overflow-y-auto"
+        >
+          {/* Mobile/tablet only — no room for a pinned sidebar below lg, so the intro becomes the first section. */}
+          <SpringReveal id="hero" className="lg:hidden">
+            <HomeHero />
+          </SpringReveal>
+          <SpringReveal id="stats" className="mx-auto w-full max-w-5xl items-center">
+            <DashboardPanels />
+          </SpringReveal>
+          <SpringReveal id="experience" className="mx-auto w-full max-w-4xl">
             <HomeExperience />
-          </div>
-          <div data-scroll-anim>
+          </SpringReveal>
+          <SpringReveal id="skills" className="mx-auto w-full max-w-4xl">
             <HomeSkills />
-          </div>
-          <div data-scroll-anim>
+          </SpringReveal>
+          <SpringReveal id="certs" className="mx-auto w-full max-w-4xl">
             <HomeCerts />
-          </div>
-          <div data-scroll-anim>
+          </SpringReveal>
+          <SpringReveal id="education" className="mx-auto w-full max-w-4xl">
             <HomeEducation />
-          </div>
-          <div data-scroll-anim>
+          </SpringReveal>
+          <SpringReveal id="projects">
             <HomeProjects />
-          </div>
-        </div>
-      </ScrollAnimations>
-    </main>
+          </SpringReveal>
+          <footer className="snap-end border-t-2 border-[var(--border)] bg-[var(--surface)] py-8">
+            <FooterContent />
+          </footer>
+        </main>
+      </div>
+    </>
   );
 }

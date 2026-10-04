@@ -1,65 +1,121 @@
 @import "tailwindcss";
 
 :root {
-  --bg: #FAFAFA;
-  --fg: #09090B;
-  --accent: #2563EB;
-  --card: #FFFFFF;
-  --border: #E4E4E7;
-  --muted: #475569;
+  /* Dark theme — default (security console) */
+  --bg: #030712;
+  --fg: #f0f4f8;
+  --accent: #00e676;
+  --accent2: #00e5ff;
+  --card: #0d1a2b;
+  --card-fg: #f0f4f8;
+  --card-muted: #8aa0b0;
+  --surface: #0a1220;
+  --border: #1e2a3a;
+  --muted: #8aa0b0;
+
+  /* Ambient glow / glass surfaces — low-opacity, atmosphere only. Never use for text/interactive states. */
+  --glow-green: rgba(0, 230, 118, 0.12);
+  --glow-cyan: rgba(0, 229, 255, 0.08);
+  --glass-bg: rgba(13, 26, 43, 0.55);
+  --glass-border: rgba(0, 230, 118, 0.15);
+
+  /* Shape */
+  --radius-card: 10px;
+  --radius-tag: 8px;
+  --radius-pill: 999px;
+
+  /* Motion */
+  --ease-bounce: cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
-.dark {
-  --bg: #18181B;
-  --fg: #FAFAFA;
-  --accent: #60A5FA;
-  --card: #27272A;
-  --border: #3F3F46;
-  --muted: #A1A1AA;
+.light {
+  /* Real light theme — cards are light surfaces here, not an "inverted dark console" anymore. */
+  --bg: #f4f6f8;
+  --fg: #0a0f1a;
+  --accent: #00963f;
+  --accent2: #00748c;
+  --card: #ffffff;
+  --card-fg: #0a0f1a;
+  --card-muted: #4b5563;
+  --surface: #e8ecf0;
+  --border: #c7cfd8;
+  --muted: #3f4855;
+
+  --glow-green: rgba(0, 150, 63, 0.1);
+  --glow-cyan: rgba(0, 116, 140, 0.08);
+  --glass-bg: rgba(255, 255, 255, 0.6);
+  --glass-border: rgba(0, 150, 63, 0.22);
 }
 
 @theme inline {
-  --font-display: "Archivo", "Helvetica Neue", system-ui, sans-serif;
-  --font-body: "Space Grotesk", "Inter", system-ui, sans-serif;
-  --font-mono: "JetBrains Mono", monospace;
+  --font-display: var(--font-archivo), "Helvetica Neue", system-ui, sans-serif;
+  --font-body: var(--font-space-grotesk), "Inter", system-ui, sans-serif;
+  --font-mono: var(--font-jetbrains-mono), ui-monospace, monospace;
   --color-background: var(--bg);
   --color-foreground: var(--fg);
   --color-accent: var(--accent);
   --color-card: var(--card);
 }
 
+html {
+  /* Lenis drives scroll with its own easing; the browser's native rubber-band bounce
+     at the top/bottom of the page fights it, which reads as the page "sticking" then
+     getting yanked back. Let Lenis be the only thing deciding what happens at the edges. */
+  overscroll-behavior-y: none;
+}
+
 body {
   background: var(--bg);
   color: var(--fg);
-  font-family: "Space Grotesk", "Inter", system-ui, sans-serif;
+  font-family: var(--font-body);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   letter-spacing: -0.01em;
+  overscroll-behavior-y: none;
 }
 
-/* Sharp geometric — minimal style */
+/* Cards — rounded in v1.1 (was sharp 0px) */
 .card-sharp {
   border: 1px solid var(--border);
-  border-radius: 0px;
+  border-radius: var(--radius-card);
   background: var(--card);
+  color: var(--card-fg);
   padding: 2rem;
 }
 
-/* Large bold display type */
+/* Large bold display type — fluid, scales further than v1 */
 .h1-display {
-  font-family: "Archivo", "Helvetica Neue", system-ui, sans-serif;
-  font-size: clamp(3rem, 10vw, 7rem);
-  line-height: 1.05;
-  letter-spacing: -0.05em;
+  font-family: var(--font-display);
+  font-size: clamp(3.5rem, 2.2rem + 7vw, 10rem);
+  line-height: 1;
+  letter-spacing: -0.04em;
+  font-weight: 800;
+}
+
+/* Intro name — fluid, sized for the pinned sidebar / mobile intro block (narrower than h1-display) */
+.h1-intro {
+  font-family: var(--font-display);
+  font-size: clamp(2.5rem, 1.8rem + 3vw, 4.5rem);
+  line-height: 1.02;
+  letter-spacing: -0.03em;
+  font-weight: 800;
+}
+
+/* Section heading — fluid */
+.h2-section {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 1.5rem + 2.5vw, 3.5rem);
+  line-height: 1.1;
+  letter-spacing: -0.02em;
   font-weight: 700;
 }
 
-/* Minimal section heading */
-.h2-section {
-  font-family: "Archivo", sans-serif;
-  font-size: clamp(1.75rem, 4vw, 2.75rem);
-  line-height: 1.15;
-  letter-spacing: -0.03em;
+/* Card title */
+.h3-card {
+  font-family: var(--font-display);
+  font-size: clamp(1.375rem, 1.1837rem + 0.8163vw, 1.75rem);
+  line-height: 1.2;
+  letter-spacing: -0.02em;
   font-weight: 600;
 }
 
@@ -73,7 +129,7 @@ body {
 
 /* Mono label */
 .mono-label {
-  font-family: "JetBrains Mono", monospace;
+  font-family: var(--font-mono);
   font-size: 0.7rem;
   letter-spacing: 0.15em;
   text-transform: uppercase;
@@ -81,44 +137,154 @@ body {
   font-weight: 500;
 }
 
-/* Sharp button — minimal */
+/* Button — rounded in v1.1 (was sharp 0px) */
 .btn-sharp {
   border: 1.5px solid var(--fg);
-  border-radius: 0px;
+  border-radius: var(--radius-card);
   padding: 0.75rem 1.5rem;
-  font-family: "Archivo", sans-serif;
+  font-family: var(--font-display);
   font-weight: 600;
   font-size: 0.875rem;
   letter-spacing: -0.02em;
   background: transparent;
   color: var(--fg);
-  transition: background 200ms ease, color 200ms ease;
+  transition: background 200ms ease, color 200ms ease, transform 300ms var(--ease-bounce);
 }
 .btn-sharp:hover {
   background: var(--fg);
   color: var(--bg);
+  transform: translateY(-1px);
 }
 
-/* Sharp tag pills */
+/* Tag pills — rounded in v1.1 (was sharp 0px) */
 .tag-sharp {
   border: 1px solid var(--border);
-  border-radius: 0px;
+  border-radius: var(--radius-tag);
   padding: 0.2rem 0.6rem;
-  font-family: "JetBrains Mono", monospace;
+  font-family: var(--font-mono);
   font-size: 0.7rem;
-  color: var(--fg);
+  color: var(--card-fg);
   letter-spacing: 0.01em;
   background: var(--card);
 }
 
-/* Sharp divider */
+/* Divider */
 .divider-sharp {
   height: 1px;
   background: var(--border);
   border: none;
 }
 
-/* Focus ring — sharp, visible */
+/* Glass surface — floating nav / colophon card */
+.glass-surface {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-pill);
+  backdrop-filter: blur(16px) saturate(1.4);
+  -webkit-backdrop-filter: blur(16px) saturate(1.4);
+}
+
+/* Ambient hero glow */
+.hero-glow {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: min(70vw, 900px);
+  height: min(70vw, 900px);
+  transform: translate(-50%, -50%);
+  background: radial-gradient(
+    circle,
+    var(--glow-green) 0%,
+    var(--glow-cyan) 45%,
+    transparent 70%
+  );
+  filter: blur(40px);
+  pointer-events: none;
+  animation: hero-glow-drift 18s ease-in-out infinite;
+}
+
+@keyframes hero-glow-drift {
+  0%,
+  100% {
+    transform: translate(-50%, -50%) scale(1);
+  }
+  50% {
+    transform: translate(-48%, -52%) scale(1.08);
+  }
+}
+
+/* Full-page snap sections (homepage) */
+.snap-container {
+  /* proximity (not mandatory) — a fast flick glides through instead of hard-stopping at every section */
+  scroll-snap-type: y proximity;
+  scroll-behavior: smooth;
+  overscroll-behavior-y: contain;
+}
+
+.snap-section {
+  scroll-snap-align: start;
+  min-height: 100%;
+}
+
+/* Trailing content after the last snap-section (e.g. the homepage footer) — needs its
+   own snap point, or proximity snapping has nowhere valid to land and bounces back to
+   the previous section instead of letting you settle on it. */
+.snap-end {
+  scroll-snap-align: end;
+}
+
+/* Shimmer sweep — hero name */
+.animate-shimmer {
+  animation: shimmer 5s linear infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* Terminal cursor — blinking block */
+.cursor-blink {
+  display: inline-block;
+  margin-left: 1px;
+  animation: cursor-blink 1s step-end infinite;
+}
+
+@keyframes cursor-blink {
+  0%,
+  50% {
+    opacity: 1;
+  }
+  50.01%,
+  100% {
+    opacity: 0;
+  }
+}
+
+/* Skills orbit — counter-rotating layers so node labels stay upright */
+@keyframes orbit-cw {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes orbit-ccw {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(-360deg);
+  }
+}
+
+/* Focus ring — visible */
 :focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: 2px;

@@ -25,11 +25,11 @@ export function ContactServices() {
             className="card-sharp flex flex-col p-5 relative overflow-hidden"
           >
             <span className="absolute top-0 right-0 w-6 h-6 border-t-2 border-r-2 border-[var(--accent)] opacity-20" />
-            <h3 className="h3-card text-[var(--fg)]">{service.title}</h3>
-            <p className="mt-2 text-sm leading-relaxed text-[var(--muted)]">
+            <h3 className="h3-card text-[var(--card-fg)]">{service.title}</h3>
+            <p className="mt-2 text-sm leading-relaxed text-[var(--card-muted)]">
               {service.summary}
             </p>
-            <ul className="mt-4 flex-1 space-y-1.5 border-t border-[var(--border)] pt-4 text-sm text-[var(--muted)]">
+            <ul className="mt-4 flex-1 space-y-1.5 border-t border-[var(--border)] pt-4 text-sm text-[var(--card-muted)]">
               {service.items.map((item) => (
                 <li key={item} className="flex gap-2">
                   <span className="text-[var(--accent)] shrink-0 font-mono text-xs">›</span>

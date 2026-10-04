@@ -63,7 +63,7 @@ export const profile = {
   name: "Mohammed Al-Dokimi",
   tagline: "Software Engineer",
   location: "Budapest, Hungary",
-  bio: "Software Engineer with deep expertise in Golang and Python, specializing in building scalable automation tools and microservices for cloud environments. Proven track record in creating backends and integrating microservices and new features in large codebases. Outside of work, I teach imperative programming using the C programming language. I thrive in dynamic, collaborative environments and aspire to advance in my engineering journey, driving innovation and delivering meaningful impact.",
+  bio: "I build and secure cloud-native systems — Go and Python backends, Kubernetes, automation that holds up under audit. Currently shipping AI-assisted platform tooling at Genesys.",
   links: [
     { label: "Email", href: "mailto:mo.aldokimi@gmail.com" },
     {
@@ -76,7 +76,6 @@ export const profile = {
       href: "https://github.com/aldokimi",
       external: true,
     },
-    { label: "Phone", href: "tel:+36301589147" },
   ] satisfies ProfileLink[],
 };
 

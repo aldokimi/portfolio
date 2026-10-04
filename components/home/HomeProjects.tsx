@@ -4,9 +4,9 @@ import { projects } from "@/lib/profile";
 
 export function HomeProjects() {
   return (
-    <div id="projects" className="scroll-mt-28 space-y-6">
+    <div className="space-y-6">
       <SectionHeading label="Projects" title="Featured repositories" />
-      <div className="grid gap-4 sm:grid-cols-2">
+      <div className="grid gap-6">
         {projects.map((project) => (
           <ProjectCard key={project.url} project={project} />
         ))}

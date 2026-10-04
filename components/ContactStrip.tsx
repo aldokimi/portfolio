@@ -18,10 +18,7 @@ export function ContactStrip({
 }: {
   variant?: "compact" | "full";
 }) {
-  const links =
-    variant === "compact"
-      ? profile.links.filter((l) => l.label !== "Phone")
-      : profile.links;
+  const links = profile.links;
 
   return (
     <div className="space-y-4">

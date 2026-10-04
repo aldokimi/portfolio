@@ -19,5 +19,5 @@ export default function LenisScroll({ children }: { children: ReactNode }) {
     };
   }, []);
 
-  return <div>{children}</div>;
+  return <div className="flex min-h-full flex-1 flex-col">{children}</div>;
 }
